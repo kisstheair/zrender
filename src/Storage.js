@@ -48,7 +48,7 @@ Storage.prototype = {
 
     /**
      * @param  {Function} cb
-     *
+     *  穿过;横贯，横切;横木;[建]横梁
      */
     traverse: function (cb, context) {
         for (var i = 0; i < this._roots.length; i++) {
@@ -183,6 +183,7 @@ Storage.prototype = {
     /**
      * 删除指定的图形(Shape)或者组(Group)
      * @param {string|Array.<string>} [el] 如果为空清空整个Storage
+     *
      */
     delRoot: function (el) {
         if (el == null) {
@@ -224,7 +225,7 @@ Storage.prototype = {
         el.dirty(false);
 
         return this;
-    },
+    },                    // 把元素放入 storege中，并且给元素添加 __storage 属性 指向所属的Storage
 
     delFromStorage: function (el) {
         if (el) {
