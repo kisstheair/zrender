@@ -310,6 +310,6 @@ Group.prototype = {
     }
 };
 
-zrUtil.inherits(Group, Element);
+zrUtil.inherits(Group, Element);   //继承
 
 export default Group;
