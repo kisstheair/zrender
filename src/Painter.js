@@ -162,7 +162,7 @@ var Painter = function (root, storage, opts) {
      * @type {Array.<number>}
      * @private
      */
-    var zlevelList = this._zlevelList = [];
+    var zlevelList = this._zlevelList = [];           //是一个数组， 应该是记录的 layers中每个key   数组。
 
     /**
      * @type {Object.<string, module:zrender/Layer>}
