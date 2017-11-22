@@ -18,7 +18,7 @@ import Image from './graphic/Image';
 // PENDIGN
 // Layer exceeds MAX_PROGRESSIVE_LAYER_NUMBER may have some problem when flush directly second time.
 //
-// Maximum progressive layer. When exceeding this number. All elements will be drawed in the last layer.
+// Maximum progressive layer. When exceeding this number. All elements will be drawed in the last layer.    最大累进层。超过这个数字。所有元素将在最后一层绘制。
 var MAX_PROGRESSIVE_LAYER_NUMBER = 5;
 
 function parseInt10(val) {
@@ -217,9 +217,10 @@ var Painter = function (root, storage, opts) {
      * @type {module:zrender/Layer}
      * @private
      */
-    this._hoverlayer;
+    this._hoverlayer;                           // 下面的hoverElement 数组中的元素都是在这个图层上渲染的。
 
-    this._hoverElements = [];
+    this._hoverElements = [];                  // addHover addHover  clearHover  refreshHover 全部都是对这个数组的维护。  refreshHover 遍历一下  调用_doPaintEl渲染
+                                                 // 里面放置得并不是  元素，  而是元素的一个镜像。 通过这个镜像 可以找到元素本身。
 };
 
 Painter.prototype = {
@@ -256,7 +257,7 @@ Painter.prototype = {
 
     /**
      * 刷新
-     * @param {boolean} [paintAll=false] 强制绘制所有displayable
+     * @param {boolean} [paintAll=false]   强制绘制所有displayable      把 storage仓库中的 单个图形 全部绘制一遍
      */
     refresh: function (paintAll) {
 
@@ -284,7 +285,10 @@ Painter.prototype = {
         return this;
     },
 
-    addHover: function (el, hoverStyle) {
+
+
+
+    addHover: function (el, hoverStyle) {            // 里面放置得并不是  元素，  而是元素的一个镜像。 通过这个镜像 可以找到元素本身。
         if (el.__hoverMir) {
             return;
         }
@@ -298,7 +302,7 @@ Painter.prototype = {
         this._hoverElements.push(elMirror);
     },
 
-    removeHover: function (el) {
+    addHover: function (el) {
         var elMirror = el.__hoverMir;
         var hoverElements = this._hoverElements;
         var idx = util.indexOf(hoverElements, elMirror);
@@ -340,7 +344,7 @@ Painter.prototype = {
         hoverLayer.ctx.save();
         for (var i = 0; i < len;) {
             var el = hoverElements[i];
-            var originalEl = el.__from;
+            var originalEl = el.__from;       // 通过镜像的引用，找到真实的元素，
             // Original el is removed
             // PENDING
             if (!(originalEl && originalEl.__zr)) {
@@ -353,7 +357,7 @@ Painter.prototype = {
 
             // Use transform
             // FIXME style and shape ?
-            if (!originalEl.invisible) {
+            if (!originalEl.invisible) {                          //这里为什么用  镜像元素，而不是用真实的元素呢？
                 el.transform = originalEl.transform;
                 el.invTransform = originalEl.invTransform;
                 el.__clipPaths = originalEl.__clipPaths;
@@ -363,6 +367,10 @@ Painter.prototype = {
         }
         hoverLayer.ctx.restore();
     },
+
+
+
+
 
     _startProgessive: function () {
         var self = this;
@@ -393,7 +401,7 @@ Painter.prototype = {
                 }
             }
         }
-    },
+    },                // 开始进度， 开始进程，   绘画的开始，  像做动画一样，  定时器 一针一针的去渲染。   zrender 的 鼠标悬浮  不是用的css的hover  而是图层。
 
     _clearProgressive: function () {
         this._progressiveToken = -1;
@@ -403,21 +411,21 @@ Painter.prototype = {
         });
     },
 
-    _paintList: function (list, paintAll) {
+    _paintList: function (list, paintAll) {           //绘制 整个列表
 
         if (paintAll == null) {
             paintAll = false;
         }
 
-        this._updateLayerStatus(list);
+        this._updateLayerStatus(list);                // 更新层状态
 
-        this._clearProgressive();
+        this._clearProgressive();                     // 更新
 
-        this.eachBuiltinLayer(preProcessLayer);
+        this.eachBuiltinLayer(preProcessLayer);        // 更新
 
-        this._doPaintList(list, paintAll);
+        this._doPaintList(list, paintAll);             // 更新
 
-        this.eachBuiltinLayer(postProcessLayer);
+        this.eachBuiltinLayer(postProcessLayer);       // 更新
     },
 
     _doPaintList: function (list, paintAll) {

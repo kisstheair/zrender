@@ -327,7 +327,7 @@ Path.extend = function (defaults) {
             this.style.extendFrom(defaults.style, false);
         }
 
-        // Extend default shape
+        // Extend default shape    继承默认的形状（如果没有给，那就用原来默认的。）
         var defaultShape = defaults.shape;
         if (defaultShape) {
             this.shape = this.shape || {};

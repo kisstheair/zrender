@@ -58,7 +58,7 @@ var PathProxy = function (notSaveData) {
 
     if (this._saveData) {
         /**
-         * Path data. Stored as flat array
+         * Path data. Stored as flat array          路径数据， 作为动态数组来存储、
          * @type {Array.<Object>}
          */
         this.data = [];
@@ -86,7 +86,7 @@ PathProxy.prototype = {
 
     _len: 0,
 
-    _lineDash: null,
+    _lineDash: null,      // 线划
 
     _dashOffset: 0,
 

@@ -13,8 +13,8 @@ import * as zrUtil from './core/util';
  */
 var Element = function (opts) { // jshint ignore:line
 
-    Transformable.call(this, opts);
-    Eventful.call(this, opts);
+    Transformable.call(this, opts);        //    在构造函数中应该重写父类的属性，    把子类中构造函数的属性也拿过来。
+    Eventful.call(this, opts);            // 事件操作，绑定 触发  解绑
     Animatable.call(this, opts);
 
     /**
@@ -67,8 +67,8 @@ Element.prototype = {
     clipPath: null,
 
     /**
-     * Drift element
-     * @param  {number} dx dx on the global space
+     * Drift element                        漂移元素
+     * @param  {number} dx dx on the global space                 transform  变换;改变;改观   应该是记录开始位置，偏移距离的 坐标的一个数组把？
      * @param  {number} dy dy on the global space
      */
     drift: function (dx, dy) {
@@ -249,8 +249,8 @@ Element.prototype = {
     }
 };
 
-zrUtil.mixin(Element, Animatable);
-zrUtil.mixin(Element, Transformable);
-zrUtil.mixin(Element, Eventful);
+zrUtil.mixin(Element, Animatable);      //动画         混合， 不是覆盖，    首先判断有没有原型，有就用原型，没有的话就用本身。
+zrUtil.mixin(Element, Transformable);   // 变化
+zrUtil.mixin(Element, Eventful);        // 事件
 
 export default Element;

@@ -35,9 +35,9 @@ function shapeCompareFunc(a, b) {
  * @constructor
  */
 var Storage = function () { // jshint ignore:line
-    this._roots = [];
+    this._roots = [];         //，将元素存储在this._roots（数组）和this._displayList（数组）中，然后负责在其中进行增（addRoot，addToMap）删(delRoot,delFromMap)改（updateDisplayList）查（get，getDisplayList）
 
-    this._displayList = [];
+    this._displayList = [];   // 两个数组一样？？    那为什么用2个呢？    _roots是供外部使用的，进行增删改，     _displayList是每次内部更新一下，重新排序roots之后放入进去的， 供绘制用的。
 
     this._displayListLen = 0;
 };
@@ -72,8 +72,15 @@ Storage.prototype = {
         return this._displayList;
     },
 
+
+
+
+
+
+
+
     /**
-     * 更新图形的绘制队列。
+     * 更新图形的绘制队列。                                                                                       外部插入roots 之后，  更新一下绘图队列  ----排序之后放入_displayList
      * 每次绘制前都会调用，该方法会先深度优先遍历整个树，更新所有Group和Shape的变换并且把所有可见的Shape保存到数组中，
      * 最后根据绘制的优先级（zlevel > z > 插入顺序）排序得到绘制队列
      * @param {boolean} [includeIgnore=false] 是否包含 ignore 的数组
@@ -93,9 +100,9 @@ Storage.prototype = {
 
         // displayList.sort(shapeCompareFunc);
         env.canvasSupported && timsort(displayList, shapeCompareFunc);
-    },
+    },                              // roots  和 _displayList 两个数组 是存储元素的地方，  roots 是供外部调用的，  _displayList 是内部使用的。
 
-    _updateAndAddDisplayable: function (el, clipPaths, includeIgnore) {
+    _updateAndAddDisplayable: function (el, clipPaths, includeIgnore) {           // 添加可以绘制的形状     添加到数组__clipPaths
 
         if (el.ignore && !includeIgnore) {
             return;
@@ -162,6 +169,18 @@ Storage.prototype = {
             this._displayList[this._displayListLen++] = el;
         }
     },
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * 添加图形(Shape)或者组(Group)到根节点

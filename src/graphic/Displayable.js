@@ -37,7 +37,7 @@ function Displayable(opts) {
     this.style = new Style(opts.style, this);
 
     this._rect = null;
-    // Shapes for cascade clipping.
+    // Shapes for cascade clipping.        级联裁剪的形状
     this.__clipPaths = [];
 
     // FIXME Stateful must be mixined after style is setted
@@ -83,7 +83,7 @@ Displayable.prototype = {
 
     /**
      * z层level，决定绘画在哪层canvas中
-     * @name module:/zrender/graphic/Displayable#zlevel
+     * @name module:/zrender/graphic/Displayable#zlevel                   最后根据绘制的   优先级（zlevel > z > 插入顺序）排序得到绘制队列
      * @type {number}
      * @default 0
      */
@@ -135,7 +135,7 @@ Displayable.prototype = {
     rectHover: false,
 
     /**
-     * Render the element progressively when the value >= 0,
+     * Render the element progressively when the value >= 0,    逐步渲染元素当
      * usefull for large data.
      * @type {number}
      */

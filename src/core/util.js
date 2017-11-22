@@ -176,7 +176,7 @@ export function extend(target, source) {
 export function defaults(target, source, overlay) {
     for (var key in source) {
         if (source.hasOwnProperty(key)
-            && (overlay ? source[key] != null : target[key] == null)
+            && (overlay ? source[key] != null : target[key] == null)          // 不覆盖，只是融合， 本身没有的情况下，才会把属性拿过了。
         ) {
             target[key] = source[key];
         }

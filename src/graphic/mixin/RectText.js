@@ -8,7 +8,7 @@ import BoundingRect from '../../core/BoundingRect';
 
 var tmpRect = new BoundingRect();
 
-var RectText = function () {};
+var RectText = function () {};      // 矩形文本
 
 RectText.prototype = {
 

@@ -48,7 +48,7 @@ var handlerNames = [
  * @param {module:zrender/Storage} storage Storage instance.
  * @param {module:zrender/Painter} painter Painter instance.
  * @param {module:zrender/dom/HandlerProxy} proxy HandlerProxy instance.
- * @param {HTMLElement} painterRoot painter.root (not painter.getViewportRoot()).
+ * @param {HTMLElement} painterRoot painter.root (not painter.getViewportRoot()).   我们知道canvas API没有提供监听每个元素的机制，这就需要一些处理。处理的思路是：监听事件的作用坐标（如点击时候的坐标），判断在哪个绘制元素的范围中，如果在某个元素中，这个元素就监听该事件。
  */
 var Handler = function(storage, painter, proxy, painterRoot) {
     Eventful.call(this);
