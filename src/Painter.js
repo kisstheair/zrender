@@ -227,6 +227,8 @@ Painter.prototype = {
 
     constructor: Painter,
 
+
+
     getType: function () {
         return 'canvas';
     },
@@ -254,6 +256,10 @@ Painter.prototype = {
             };
         }
     },
+
+
+
+
 
     /**
      * 刷新
@@ -410,6 +416,11 @@ Painter.prototype = {
             layer.__dirty && layer.clear();
         });
     },
+
+
+
+
+
 
     _paintList: function (list, paintAll) {           //绘制 整个列表
 
@@ -612,8 +623,22 @@ Painter.prototype = {
         }
     },
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
-     * 获取 zlevel 所在层，如果不存在则会创建一个新的层
+     * 获取 zlevel 所在层，如果不存在则会创建一个新的层         与图层有关的函数
      * @param {number} zlevel
      * @return {module:zrender/Layer}
      */
@@ -907,6 +932,19 @@ Painter.prototype = {
 
         zlevelList.splice(util.indexOf(zlevelList, zlevel), 1);
     },
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * 区域大小变化后重绘

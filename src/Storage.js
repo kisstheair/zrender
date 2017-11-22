@@ -183,7 +183,7 @@ Storage.prototype = {
 
 
     /**
-     * 添加图形(Shape)或者组(Group)到根节点
+     * 添加图形(Shape)或者组(Group)到根节点                 外部对roots进行维护
      * @param {module:zrender/Element} el
      */
     addRoot: function (el) {
@@ -237,14 +237,14 @@ Storage.prototype = {
                 el.delChildrenFromStorage(this);
             }
         }
-    },
+    },                     //  清空 roots  清空 displayList ， 并且清除引用。
 
     addToStorage: function (el) {
         el.__storage = this;
         el.dirty(false);
 
         return this;
-    },                    // 把元素放入 storege中，并且给元素添加 __storage 属性 指向所属的Storage
+    },                // 这里不能说是添加到Storage了，因为addRoot已经添加到roots中了，这里只是给元素添加 __storage 属性 指向所属的Storage
 
     delFromStorage: function (el) {
         if (el) {
@@ -262,7 +262,20 @@ Storage.prototype = {
         this._roots = null;
     },
 
-    displayableSortFunc: shapeCompareFunc
+
+
+
+
+
+
+
+
+
+
+
+
+
+    displayableSortFunc: shapeCompareFunc     // 排序函数 大于 等于，小于   返回正数，  0   ， 负数
 };
 
 export default Storage;

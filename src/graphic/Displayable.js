@@ -83,7 +83,7 @@ Displayable.prototype = {
 
     /**
      * z层level，决定绘画在哪层canvas中
-     * @name module:/zrender/graphic/Displayable#zlevel                   最后根据绘制的   优先级（zlevel > z > 插入顺序）排序得到绘制队列
+     * @name module:/zrender/graphic/Displayable#zlevel                   最后根据绘制的   优先级（zlevel > z > 插入顺序z2）排序得到绘制队列
      * @type {number}
      * @default 0
      */

@@ -137,7 +137,7 @@ var ZRender = function (id, dom, opts) {
      * @type {module:zrender/animation/Animation}
      */
     this.animation = new Animation({
-        stage: {
+        stage: {                                     // 举行;展现;上演;筹划    update 对应的是一个刷新函数，
             update: zrUtil.bind(this.flush, this)
         }
     });
@@ -209,6 +209,16 @@ ZRender.prototype = {
         this._needsRefresh = true;
     },
 
+
+
+
+
+
+
+
+
+
+
     /**
      * Repaint the canvas immediately
      */
@@ -247,10 +257,23 @@ ZRender.prototype = {
         if (this._needsRefreshHover) {
             this.refreshHoverImmediately();
         }
-    },
+    },                                           // 判断 刷新标志位， 如果需要刷新 ，那么调用 painter的刷新接口。
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
-     * Add element to hover layer
+     * Add element to hover layer                   hover相关的， 会响应的调用 painter的 hover 的维护接口。 进行刷新。
      * @param  {module:zrender/Element} el
      * @param {Object} style
      */
@@ -297,6 +320,18 @@ ZRender.prototype = {
         this._needsRefreshHover = false;
         this.painter.refreshHover && this.painter.refreshHover();
     },
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Resize the canvas.
@@ -355,8 +390,21 @@ ZRender.prototype = {
         return this.painter.pathToImage(e, dpr);
     },
 
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
-     * Set default cursor
+     * Set default cursor                                          事件处理相关的
      * @param {string} [cursorStyle='default'] 例如 crosshair
      */
     setCursorStyle: function (cursorStyle) {
@@ -402,6 +450,11 @@ ZRender.prototype = {
     trigger: function (eventName, event) {
         this.handler.trigger(eventName, event);
     },
+
+
+
+
+
 
 
     /**

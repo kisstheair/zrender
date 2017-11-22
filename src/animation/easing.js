@@ -13,7 +13,7 @@ var easing = {
     },
 
     /**
-    * @param {number} k
+    * @param {number} k       二次方程式
     * @return {number}
     */
     quadraticIn: function (k) {
