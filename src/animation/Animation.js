@@ -181,7 +181,7 @@ Animation.prototype = {
     _startLoop: function () {
         var self = this;
 
-        this._running = true;
+        this._running = true;                   // m默认初始状态就是 运行状态。 所以当zrender init 之中 调用this.animation.start(); 就一直保持着 刷新的状态。
 
         function step() {
             if (self._running) {                     // 总的运行标识， 如果开 那么久一直运行下去。
@@ -193,7 +193,7 @@ Animation.prototype = {
         }
 
         requestAnimationFrame(step);
-    },         // 根据 进行，暂停的标识  ------总进度控制。
+    },         // 根据 进行，暂停的标识  ------总进度控制。  一直循环下去
 
     /**
      * 开始运行动画

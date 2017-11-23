@@ -141,7 +141,7 @@ var ZRender = function (id, dom, opts) {
             update: zrUtil.bind(this.flush, this)
         }
     });
-    this.animation.start();
+    this.animation.start();              // 开始动画，那就一直刷新下去了。
 
     /**
      * @type {boolean}
