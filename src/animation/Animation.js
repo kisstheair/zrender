@@ -52,15 +52,15 @@ var Animation = function (options) {
     // private properties
     this._clips = [];
 
-    this._running = false;
+    this._running = false;       // 是否正在运行的标识
 
-    this._time;
+    this._time;                   // 点击开始的时间点
 
-    this._pausedTime;
+    this._pausedTime;            // 恢复之后，（恢复时间点 -  暂停时间点的 ） 时间间隔。
 
-    this._pauseStart;
+    this._pauseStart;            // 暂停的那个时间点
 
-    this._paused = false;
+    this._paused = false;         // 是否暂停的标识
 
     Dispatcher.call(this);
 };
@@ -68,16 +68,21 @@ var Animation = function (options) {
 Animation.prototype = {
 
     constructor: Animation,
-    /**
+
+
+
+
+
+    /**                                                               对动画片段的维护。
      * 添加 clip
-     * @param {module:zrender/animation/Clip} clip
+     * @param {module:zrender/animation/Clip} clip                    单独添加一个片段。
      */
     addClip: function (clip) {
         this._clips.push(clip);
     },
     /**
      * 添加 animator
-     * @param {module:zrender/animation/Animator} animator
+     * @param {module:zrender/animation/Animator} animator            animation是所有动画的一个统称，   animator是一个动画集合，包含多个clip动画片段，    这个函数，就是把一个动画集合的所有片段放入大海中。
      */
     addAnimator: function (animator) {
         animator.animation = this;
@@ -108,11 +113,27 @@ Animation.prototype = {
         }
         animator.animation = null;
     },
+    /**
+     * 清除所有动画片段
+     */
+    clear: function () {
+        this._clips = [];
+    },
+
+
+
+
+
+
+
+
+
+
 
     _update: function() {
 
-        var time = new Date().getTime() - this._pausedTime;
-        var delta = time - this._time;
+        var time = new Date().getTime() - this._pausedTime;  //
+        var delta = time - this._time;                       // 动画总共运行的时间。
         var clips = this._clips;
         var len = clips.length;
 
@@ -129,7 +150,7 @@ Animation.prototype = {
             }
         }
 
-        // Remove the finished clip
+        // Remove the finished clip           删除掉  动画结束的 chip
         for (var i = 0; i < len;) {
             if (clips[i]._needsRemove) {
                 clips[i] = clips[len - 1];
@@ -155,7 +176,7 @@ Animation.prototype = {
         if (this.stage.update) {
             this.stage.update();
         }
-    },
+    },             // 实际更新动画。
 
     _startLoop: function () {
         var self = this;
@@ -163,16 +184,16 @@ Animation.prototype = {
         this._running = true;
 
         function step() {
-            if (self._running) {
+            if (self._running) {                     // 总的运行标识， 如果开 那么久一直运行下去。
 
                 requestAnimationFrame(step);
 
-                !self._paused && self._update();
+                !self._paused && self._update();     // 只有在不暂停的情况下，才回去 更新动画。
             }
         }
 
         requestAnimationFrame(step);
-    },
+    },         // 根据 进行，暂停的标识  ------总进度控制。
 
     /**
      * 开始运行动画
@@ -192,7 +213,7 @@ Animation.prototype = {
     },
 
     /**
-     * Pause
+     * Pause 暂停
      */
     pause: function () {
         if (!this._paused) {
@@ -202,7 +223,7 @@ Animation.prototype = {
     },
 
     /**
-     * Resume
+     * Resume      继续;恢复职位
      */
     resume: function () {
         if (this._paused) {
@@ -211,12 +232,7 @@ Animation.prototype = {
         }
     },
 
-    /**
-     * 清除所有动画片段
-     */
-    clear: function () {
-        this._clips = [];
-    },
+
     /**
      * 对一个目标创建一个animator对象，可以指定目标中的属性使用动画
      * @param  {Object} target
@@ -233,10 +249,10 @@ Animation.prototype = {
         options = options || {};
 
         var animator = new Animator(
-            target,
-            options.loop,
-            options.getter,
-            options.setter
+            target,                            // 动画的目标元素
+            options.loop,                     //是不是循环
+            options.getter,                   //目标的属性获取函数
+            options.setter                    //。。。
         );
 
         this.addAnimator(animator);

@@ -459,7 +459,7 @@ var Animator = function(target, loop, getter, setter) {
 
     this._onframeList = [];
 
-    this._clipList = [];
+    this._clipList = [];                        // clip 是一个动画片段，   _clipList是动画片段的列表
 };
 
 Animator.prototype = {
