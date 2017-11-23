@@ -443,7 +443,7 @@ function createTrackClip(animator, easing, oneTrackDone, keyframes, propName, fo
  * @param {Function} setter
  */
 var Animator = function(target, loop, getter, setter) {
-    this._tracks = {};
+    this._tracks = {};                                      // 关键帧， 轨迹对象。{ width:{{time:0,value:20}, {time:20,value:100}}    ,   height:{}   }
     this._target = target;
 
     this._loop = loop || false;
@@ -470,7 +470,7 @@ Animator.prototype = {
      * @return {module:zrender/animation/Animator}
      */
     when: function(time /* ms */, props) {
-        var tracks = this._tracks;
+        var tracks = this._tracks;                      // 应该是记录  一系列关键帧的对象，    跟踪摄影;留下（脏）足迹;
         for (var propName in props) {
             if (!props.hasOwnProperty(propName)) {
                 continue;
@@ -562,7 +562,7 @@ Animator.prototype = {
         };
 
         var lastClip;
-        for (var propName in this._tracks) {
+        for (var propName in this._tracks) {                       //根据什么  去创建一个一个的 Clip      _tracks中的属性？   是 关键帧对象 ，每一个propName代表的是一个 属性名称，对应的是关键帧对象合计。
             if (!this._tracks.hasOwnProperty(propName)) {
                 continue;
             }

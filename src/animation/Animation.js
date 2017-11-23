@@ -45,7 +45,7 @@ var Animation = function (options) {
 
     options = options || {};
 
-    this.stage = options.stage || {};
+    this.stage = options.stage || {};                          // 初始化的时候，里面只有个 更新函数  {update：func。。。}
 
     this.onframe = options.onframe || function() {};
 
@@ -141,7 +141,7 @@ Animation.prototype = {
         var deferredClips = [];
         for (var i = 0; i < len; i++) {
             var clip = clips[i];
-            var e = clip.step(time, delta);
+            var e = clip.step(time, delta);                 // 这里的意思就是  time ：从动画执行，现在的时间是。。。      delta ： 从动画执行经过了多长时间。
             // Throw out the events need to be called after
             // stage.update, like destroy
             if (e) {
@@ -173,7 +173,7 @@ Animation.prototype = {
 
         this.trigger('frame', delta);
 
-        if (this.stage.update) {
+        if (this.stage.update) {             // 这里去执行，  传入进来的 update函数，     去执行的是  painter 的  绘制接口。       这里update一次， painter就绘制一次？？？？
             this.stage.update();
         }
     },             // 实际更新动画。

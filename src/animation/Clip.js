@@ -20,12 +20,12 @@ function Clip(options) {
     this._target = options.target;
 
     // 生命周期
-    this._life = options.life || 1000;
+    this._life = options.life || 1000;                       // 默认的动画执行周期是1000
     // 延时
     this._delay = options.delay || 0;
     // 开始时间
     // this._startTime = new Date().getTime() + this._delay;// 单位毫秒
-    this._initialized = false;
+    this._initialized = false;                           // 已初始化的
 
     // 是否循环
     this.loop = options.loop == null ? false : options.loop;
@@ -46,11 +46,11 @@ Clip.prototype = {
 
     constructor: Clip,
 
-    step: function (globalTime, deltaTime) {
+    step: function (globalTime, deltaTime) {               // 这里的意思就是  globalTime ：从动画执行，现在的时间是。。。      deltaTime ： 从动画执行经过了多长时间。
         // Set startTime on first step, or _startTime may has milleseconds different between clips
         // PENDING
         if (!this._initialized) {
-            this._startTime = globalTime + this._delay;
+            this._startTime = globalTime + this._delay;     // 这里定义的是本 clip的开始时间，  开始时间 是相对于 整个animation的时间进度的，  整个animation运行到这，这就是本clip的开始
             this._initialized = true;
         }
 
@@ -74,7 +74,7 @@ Clip.prototype = {
             ? easingFunc(percent)
             : percent;
 
-        this.fire('frame', schedule);
+        this.fire('frame', schedule);                                                  //执行的是 this.onframe(this._target, schedule)
 
         // 结束
         if (percent == 1) {
