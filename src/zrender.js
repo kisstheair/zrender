@@ -17,18 +17,25 @@ import Painter from './Painter';
 import Animation from './animation/Animation';
 import HandlerProxy from './dom/HandlerProxy';
 
-var useVML = !env.canvasSupported;
+var useVML = !env.canvasSupported;        // 如果不支持 canvas了 ， 那就用 vml渲染。
 
-var painterCtors = {
+var painterCtors = {                       // 渲染类型 以及 对应的控制器        如果以后扩展的话 可能加上   vml：Painter2   ，SVG :painter3
     canvas: Painter
 };
+var instances = {};                        // ZRender实例map索引
 
-var instances = {};    // ZRender实例map索引
-
-/**
- * @type {string}
- */
 export var version = '3.7.4';
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Initializing a zrender instance
@@ -41,7 +48,7 @@ export var version = '3.7.4';
  * @return {module:zrender/ZRender}
  */
 export function init(dom, opts) {
-    var zr = new ZRender(guid(), dom, opts);
+    var zr = new ZRender(guid(), dom, opts);                                       //   var zr = zrender.init(container);  一般没有传入 opts  所以都是默认选项
     instances[zr.id] = zr;
     return zr;
 }
@@ -97,26 +104,21 @@ function delInstance(id) {
  * @param {number} [opts.width] Can be 'auto' (the same as null/undefined)
  * @param {number} [opts.height] Can be 'auto' (the same as null/undefined)
  */
-var ZRender = function (id, dom, opts) {
+var ZRender = function (id, dom, opts) {                                       //   var zr = zrender.init(container);  一般没有传入 opts  所以都是默认选项
 
-    opts = opts || {};
+    opts = opts || {};   //  一般默认为空 {}
+    this.dom = dom;     //  @type {HTMLDomElement}  容器元素
+    this.id = id;       // 随机数，就是创建一个id而已
 
-    /**
-     * @type {HTMLDomElement}
-     */
-    this.dom = dom;
 
-    /**
-     * @type {string}
-     */
-    this.id = id;
+
 
     var self = this;
     var storage = new Storage();
 
-    var rendererType = opts.renderer;
+    var rendererType = opts.renderer;           // 渲染类型，  canvas 渲染 ，还是  vml渲染
     // TODO WebGL
-    if (useVML) {
+    if (useVML) {                               // 这一段是判断是否支持  canvas的 ，如果支持，那就 抛异常。
         if (!painterCtors.vml) {
             throw new Error('You need to require \'zrender/vml/vml\' to support IE8');
         }
@@ -125,7 +127,7 @@ var ZRender = function (id, dom, opts) {
     else if (!rendererType || !painterCtors[rendererType]) {
         rendererType = 'canvas';
     }
-    var painter = new painterCtors[rendererType](dom, storage, opts);
+    var painter = new painterCtors[rendererType](dom, storage, opts);              // 实际上调用的就是 new Painter(dom, storage, opts)
 
     this.storage = storage;
     this.painter = painter;

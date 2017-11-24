@@ -2,7 +2,7 @@ import Path from '../graphic/Path';
 import PathProxy from '../core/PathProxy';
 import transformPath from './transformPath';
 
-// command chars
+// command chars           绘制路径的  函数工具。
 var cc = [
     'm', 'M', 'l', 'L', 'v', 'V', 'h', 'H', 'z', 'Z',
     'c', 'C', 'q', 'Q', 't', 'T', 's', 'S', 'a', 'A'
@@ -76,12 +76,12 @@ function processArc(x1, y1, x2, y2, fa, fs, rx, ry, psiDeg, cmd, path) {
     path.addData(cmd, cx, cy, rx, ry, theta, dTheta, psi, fs);
 }
 
-function createPathProxyFromString(data) {
+function createPathProxyFromString(data) {          // path  路径解析器。
     if (!data) {
         return [];
     }
 
-    // command string
+    // command string                     //整理不规则的写法，  横杆前面加空格，将两个空格换成一个空格，将一个空格换成逗号，将两个逗号换成一个逗号
     var cs = data.replace(/-/g, ' -')
         .replace(/  /g, ' ')
         .replace(/ /g, ',')
@@ -94,13 +94,13 @@ function createPathProxyFromString(data) {
     }
 
     // create array
-    var arr = cs.split('|');
+    var arr = cs.split('|');       // 整理成数组。最后的样子[   {command:"L",points:[80,80]}  ,{command:"z",points:[125,80]} ]
     // init context point
     var cpx = 0;
     var cpy = 0;
 
     var path = new PathProxy();
-    var CMD = PathProxy.CMD;
+    var CMD = PathProxy.CMD;         // 命令对象合集
 
     var prevCmd;
     for (n = 1; n < arr.length; n++) {
@@ -320,7 +320,7 @@ function createPathProxyFromString(data) {
     path.toStatic();
 
     return path;
-}
+}                      // path  路径解析器。   把字符串 解析出来   返回  数组命令。
 
 // TODO Optimize double memory cost problem
 function createPathOptions(str, opts) {

@@ -5,7 +5,7 @@
 
 import Path from '../Path';
 
-export default Path.extend({
+export default Path.extend({                 //  这个对象 是默认的对象。 就是创建 圆形的默认值    返回的是  var Sub = function (opts) {}）     这个时候传入的opts是实际值
 
     type: 'circle',
 

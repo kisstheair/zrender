@@ -14,7 +14,7 @@ import * as bbox from './bbox';
 import BoundingRect from './BoundingRect';
 import {devicePixelRatio as dpr} from '../config';
 
-var CMD = {
+var CMD = {                             // 路径绘制的命令
     M: 1,
     L: 2,
     C: 3,
@@ -54,7 +54,7 @@ var hasTypedArray = typeof Float32Array != 'undefined';
  */
 var PathProxy = function (notSaveData) {
 
-    this._saveData = !(notSaveData || false);
+    this._saveData = !(notSaveData || false);         // 这里为了兼容，难道做了2套逻辑吗？   canvas 和SVG？     如果 _saveData 那么就是 this.data=[] 用模拟SVG  path命令绘制路径的方式，   否则就用canvas 的ctx.getContext("2d")
 
     if (this._saveData) {
         /**
