@@ -122,26 +122,13 @@ var Painter = function (root, storage, opts) {
     this.type = 'canvas';
 
     // In node environment using node-canvas
-    var singleCanvas = !root.nodeName // In node ?
+    var singleCanvas = !root.nodeName          // In node ?        // 根节点是 canvas   那就是true，
         || root.nodeName.toUpperCase() === 'CANVAS';
 
     this._opts = opts = util.extend({}, opts || {});
-
-    /**
-     * @type {number}
-     */
-    this.dpr = opts.devicePixelRatio || devicePixelRatio;
-    /**
-     * @type {boolean}
-     * @private
-     */
-    this._singleCanvas = singleCanvas;
-    /**
-     * 绘图容器
-     * @type {HTMLElement}
-     */
-    this.root = root;
-
+    this.dpr = opts.devicePixelRatio || devicePixelRatio;        //   @type {number} 设备像素比
+    this._singleCanvas = singleCanvas;                            //  @type {boolean}
+    this.root = root;                                              //  @type {HTMLElement}  绘图容器
     var rootStyle = root.style;
 
     if (rootStyle) {
@@ -152,6 +139,14 @@ var Painter = function (root, storage, opts) {
 
         root.innerHTML = '';
     }
+
+    // this._domRoot -----------------------------------这个是以后绘图的地方，判断this.root后，  返回的是canvas 空间， 或者是 div position:relative ,
+
+
+
+
+
+
 
     /**
      * @type {module:zrender/Storage}
@@ -176,16 +171,16 @@ var Painter = function (root, storage, opts) {
      */
     this._layerConfig = {};
 
-    if (!singleCanvas) {
+    if (!singleCanvas) {                                   // 如果不是canvas元素， 那就用 有可能是其他任何元素了，获取宽度，可能不一样。  专用方法去获取。
         this._width = this._getSize(0);
         this._height = this._getSize(1);
 
         var domRoot = this._domRoot = createRoot(
             this._width, this._height
         );
-        root.appendChild(domRoot);
+        root.appendChild(domRoot);                        // 如果不是canvas的话，  那就新建一个 div元素  ，宽度高度一样  positon:relative   overflow hidden  当做主背景。
     }
-    else {
+    else {                                                // 如果是canvas 元素，那就好说了， 获取宽度就一种。
         if (opts.width != null) {
             root.width = opts.width;
         }
@@ -195,17 +190,17 @@ var Painter = function (root, storage, opts) {
         // Use canvas width and height directly
         var width = root.width;
         var height = root.height;
-        this._width = width;
+        this._width = width;                             // 把 容器元素的长宽   -----给Painter ，当做总的长宽。  当做以后绘图的环境。
         this._height = height;
 
         // Create layer if only one given canvas
-        // Device pixel ratio is fixed to 1 because given canvas has its specified width and height
-        var mainLayer = new Layer(root, this, 1);
+        // Device pixel ratio is fixed to 1 because given canvas has its specified width and height   设备像素比固定为1，因为给定的画布有其指定的宽度和高度。
+        var mainLayer = new Layer(root, this, 1);         // 在画布上 布上一层主  图层
         mainLayer.initContext();
         // FIXME Use canvas width and height
         // mainLayer.resize(width, height);
-        layers[0] = mainLayer;
-        zlevelList.push(0);
+        layers[0] = mainLayer;                             // 把图层放入 图层数组里面
+        zlevelList.push(0);                                // 图层的等级 放入到  zlevelList数组中，    z 是z轴方向上的，层叠上，   level水平，层级，      zlevelList代表的是总共有几个层级。   拿着某一个层级可以去layer中 找到对应的图层。
 
         this._domRoot = root;
     }

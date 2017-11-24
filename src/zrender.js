@@ -127,12 +127,14 @@ var ZRender = function (id, dom, opts) {                                       /
     else if (!rendererType || !painterCtors[rendererType]) {
         rendererType = 'canvas';
     }
+
+
     var painter = new painterCtors[rendererType](dom, storage, opts);              // 实际上调用的就是 new Painter(dom, storage, opts)
 
     this.storage = storage;
     this.painter = painter;
 
-    var handerProxy = !env.node ? new HandlerProxy(painter.getViewportRoot()) : null;
+    var handerProxy = !env.node ? new HandlerProxy(painter.getViewportRoot()) : null;        // 非node环境
     this.handler = new Handler(storage, painter, handerProxy, painter.root);
 
     /**
