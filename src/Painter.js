@@ -157,13 +157,13 @@ var Painter = function (root, storage, opts) {
      * @type {Array.<number>}
      * @private
      */
-    var zlevelList = this._zlevelList = [];           //是一个数组， 应该是记录的 layers中每个key   数组。
+    var zlevelList = this._zlevelList = [];           //是一个数组， 应该是记录的 layers中每个key数组。
 
     /**
      * @type {Object.<string, module:zrender/Layer>}
      * @private
      */
-    var layers = this._layers = {};
+    var layers = this._layers = {};                  //
 
     /**
      * @type {Object.<string, Object>}
@@ -206,7 +206,7 @@ var Painter = function (root, storage, opts) {
     }
 
     // Layers for progressive rendering
-    this._progressiveLayers = [];
+    this._progressiveLayers = [];                    // 正在渲染的 图层数组吗？？
 
     /**
      * @type {module:zrender/Layer}
@@ -246,7 +246,7 @@ Painter.prototype = {
         var viewportRoot = this.getViewportRoot();
         if (viewportRoot) {
             return {
-                offsetLeft: viewportRoot.offsetLeft || 0,
+                offsetLeft: viewportRoot.offsetLeft || 0,         // 相对于父元素的  top  或者 left距离，
                 offsetTop: viewportRoot.offsetTop || 0
             };
         }
@@ -268,7 +268,7 @@ Painter.prototype = {
 
         this._paintList(list, paintAll);
 
-        // Paint custum layers
+        // Paint custum layers                                  绘制layer层
         for (var i = 0; i < zlevelList.length; i++) {
             var z = zlevelList[i];
             var layer = this._layers[z];
@@ -277,7 +277,7 @@ Painter.prototype = {
             }
         }
 
-        this.refreshHover();
+        this.refreshHover();                                 //刷新hover层
 
         if (this._progressiveLayers.length) {
             this._startProgessive();
@@ -303,7 +303,7 @@ Painter.prototype = {
         this._hoverElements.push(elMirror);
     },
 
-    addHover: function (el) {
+    removeHover: function (el) {
         var elMirror = el.__hoverMir;
         var hoverElements = this._hoverElements;
         var idx = util.indexOf(hoverElements, elMirror);
@@ -633,7 +633,7 @@ Painter.prototype = {
 
 
     /**
-     * 获取 zlevel 所在层，如果不存在则会创建一个新的层         与图层有关的函数
+     * 获取 zlevel 所在层，如果不存在则会创建一个新的层         与图层有关的函数       ，这些函数操作的仅仅是 layers zlevelList   这些对象 数组，  渲染是其他的事情。
      * @param {number} zlevel
      * @return {module:zrender/Layer}
      */
@@ -690,9 +690,9 @@ Painter.prototype = {
                     break;
                 }
             }
-            prevLayer = layersMap[zlevelList[i]];
+            prevLayer = layersMap[zlevelList[i]];      // 上一个层。
         }
-        zlevelList.splice(i + 1, 0, zlevel);
+        zlevelList.splice(i + 1, 0, zlevel);           // 按顺序 插入到 响应的位置。
 
         layersMap[zlevel] = layer;
 
@@ -734,7 +734,7 @@ Painter.prototype = {
         }
     },
 
-    // Iterate each buildin layer
+    // Iterate each buildin layer                              图层 也分为 内建 和外来的，  内建的图层有一个属性__builtin__为true
     eachBuiltinLayer: function (cb, context) {
         var zlevelList = this._zlevelList;
         var layer;
