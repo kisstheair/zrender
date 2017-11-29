@@ -134,9 +134,9 @@ var ZRender = function (id, dom, opts) {                                       /
     this.storage = storage;
     this.painter = painter;
 
-    var handerProxy = !env.node ? new HandlerProxy(painter.getViewportRoot()) : null;        // 非node环境
-    this.handler = new Handler(storage, painter, handerProxy, painter.root);
-
+    var handerProxy = !env.node ? new HandlerProxy(painter.getViewportRoot()) : null;        // 为什么要用代理？  我们自定义的元素Element  并不会有事件机制，  我们人为的给他添加一些规则， on  mouseover ---》handler
+    this.handler = new Handler(storage, painter, handerProxy, painter.root);                 // 可是on只是给他添加的一个方法 ，这些handler只是一些属性而已， on这个方法可以向 某个存储对象AAA中放入 handler，并不会执行
+                                                                                               // 那怎么办？  用html中的addEventListener  ，遍历存储对象AAA ，依次的 添加到 画布的容器上面，这样当容器的事件触发时，就会调用 我们AAA中的方法。  这种方式叫代理。
     /**
      * @type {module:zrender/animation/Animation}
      */
