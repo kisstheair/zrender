@@ -305,17 +305,17 @@ export function each(obj, cb, context) {
  * @param {*} [context]
  * @return {Array}
  */
-export function map(obj, cb, context) {
+export function map(obj, cb, context) {         // 同时解决      数组 和类数组的 map函数，  （类数组没有map）
     if (!(obj && cb)) {
         return;
     }
     if (obj.map && obj.map === nativeMap) {
-        return obj.map(cb, context);
+        return obj.map(cb, context);                         // 数组 直接调用自己的map
     }
     else {
         var result = [];
         for (var i = 0, len = obj.length; i < len; i++) {
-            result.push(cb.call(context, obj[i], i, obj));
+            result.push(cb.call(context, obj[i], i, obj));        //（类数组没有map）
         }
         return result;
     }
