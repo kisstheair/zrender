@@ -15,7 +15,7 @@ import Handler from './Handler';
 import Storage from './Storage';
 import Painter from './Painter';
 import Animation from './animation/Animation';
-import HandlerProxy from './dom/HandlerProxy';
+import HandlerProxy from './dom/HandlerProxy';                 // HandlerProxy 这里少了as  ，应该是 import * as HandlerProxy
 
 var useVML = !env.canvasSupported;        // 如果不支持 canvas了 ， 那就用 vml渲染。
 

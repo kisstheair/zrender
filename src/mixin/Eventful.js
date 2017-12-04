@@ -133,7 +133,7 @@ Eventful.prototype = {
     /**
      * 事件分发                       触发 ，，   扣…的扳机;发射或使爆炸   ，把某个类型的 hander 执行掉。
      *
-     * @param {string} type 事件类型
+     * @param {string} type 事件类型           触发对应的绑定的函数，
      */
     trigger: function (type) {
         if (this._$handlers[type]) {

@@ -19,11 +19,11 @@ var mouseHandlerNames = [
     'mouseup', 'mousedown', 'mousemove', 'contextmenu'
 ];
 
-var touchHandlerNames = [                                             // 触摸屏的事件
+var touchHandlerNames = [                                               // 触摸屏的事件
     'touchstart', 'touchend', 'touchmove'
 ];
 
-var pointerEventNames = {                                                   // 应该叫做 编辑事件。   输入时的事件， 就是当查看图表是， 框选区域放大-----编辑状态
+var pointerEventNames = {                                                   // （可能是ie浏览器专有的，）         应该叫做 编辑事件。   输入时的事件， 就是当查看图表是， 框选区域放大-----编辑状态
     pointerdown: 1, pointerup: 1, pointermove: 1, pointerout: 1
 };
 
@@ -96,7 +96,7 @@ function setTouchTimer(instance) {
 }
 
 
-var domHandlers = {
+var domHandlers = {                                                                       // 都放入domHandlers对象中 {}    事件名是key  handler是值。
     /**
      * Mouse move handler
      * @inner
@@ -271,11 +271,11 @@ zrUtil.each(['click', 'mousedown', 'mouseup', 'mousewheel', 'dblclick', 'context
  * 为控制类实例初始化dom 事件处理函数
  *
  * @inner
- * @param {module:zrender/Handler} instance 控制类实例
+ * @param {module:zrender/Handler} instance 控制类实例          初始化 domhandler  都有那些
  */
 function initDomHandler(instance) {
     zrUtil.each(touchHandlerNames, function (name) {
-        instance._handlers[name] = zrUtil.bind(domHandlers[name], instance);
+        instance._handlers[name] = zrUtil.bind(domHandlers[name], instance);          // 返回对应的函数， （已经指明了，上下文。直接运行就行。）
     });
 
     zrUtil.each(pointerHandlerNames, function (name) {
@@ -324,7 +324,7 @@ function HandlerDomProxy(dom) {
 
     initDomHandler(this);
 
-    if (env.pointerEventsSupported) { // Only IE11+/Edge
+    if (env.pointerEventsSupported) { // Only IE11+/Edge                                      ie11 edge 浏览器   是不是支持编辑相关的事件。
         // 1. On devices that both enable touch and mouse (e.g., MS Surface and lenovo X240),
         // IE11+/Edge do not trigger touch event, but trigger pointer event and mouse event
         // at the same time.
@@ -360,12 +360,12 @@ function HandlerDomProxy(dom) {
         // mouse event can not be handle in those devices.
         // 2. On MS Surface, Chrome will trigger both touch event and mouse event. How to prevent
         // mouseevent after touch event triggered, see `setTouchTimer`.
-        mountHandlers(mouseHandlerNames, this);
+        mountHandlers(mouseHandlerNames, this);                                                          //普通的鼠标时间是一定要添加的。
     }
 
     function mountHandlers(handlerNames, instance) {
         zrUtil.each(handlerNames, function (name) {
-            addEventListener(dom, eventNameFix(name), instance._handlers[name]);
+            addEventListener(dom, eventNameFix(name), instance._handlers[name]);                       // 最接近的地方，   把handler  绑定到原始的dom元素上面。
         }, instance);
     }
 }

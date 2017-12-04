@@ -42,3 +42,7 @@ export {vector};
 export {colorTool as color};
 export {pathTool as path};
 export {zrUtil as util};
+
+
+// 最后导出zrender  的时候    直接导出 zrender.js 和 export.js   合并之后 -------  生成一个 zrender.js  完成。
+// 之所以  这么多模块都没有挂载到zrender上面，而是在最后合并， 是因为 怕乱掉， 这样的结构最清晰。
