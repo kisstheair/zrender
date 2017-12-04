@@ -67,7 +67,7 @@ function defaultGetZrXY(el, e, out) {
 
 /**
  * 如果存在第三方嵌入的一些dom触发的事件，或touch事件，需要转换一下事件坐标.
- * `calculate` is optional, default false.
+ * `calculate` is optional, default false.                                     // 使正常化;使标准化
  */
 export function normalizeEvent(el, e, calculate) {
 

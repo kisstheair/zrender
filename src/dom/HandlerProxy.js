@@ -13,7 +13,7 @@ import GestureMgr from '../core/GestureMgr';
 
 
 var TOUCH_CLICK_DELAY = 300;
-                                                               // 不仅仅有鼠标事件了 现在有Mouse 鼠标事件   touch 触摸事件  pointer 输入事件 Pointer Events API
+                                                               // 不仅仅有鼠标事件了 现在有Mouse 鼠标事件   |||||  touch 触摸事件   |||||   pointer 输入事件 Pointer Events API
 var mouseHandlerNames = [
     'click', 'dblclick', 'mousewheel', 'mouseout',
     'mouseup', 'mousedown', 'mousemove', 'contextmenu'
@@ -23,7 +23,7 @@ var touchHandlerNames = [                                             // 触摸�
     'touchstart', 'touchend', 'touchmove'
 ];
 
-var pointerEventNames = {                                                   // 输入时的事件， 就是当查看图表是， 框选区域放大-----编辑状态
+var pointerEventNames = {                                                   // 应该叫做 编辑事件。   输入时的事件， 就是当查看图表是， 框选区域放大-----编辑状态
     pointerdown: 1, pointerup: 1, pointermove: 1, pointerout: 1
 };
 
@@ -32,7 +32,7 @@ var pointerHandlerNames = zrUtil.map(mouseHandlerNames, function (name) {
     return pointerEventNames[nm] ? nm : name;
 });
 
-
+// 总共 15个事件 ，  为什么要分成2部分呢？
 
 
 
