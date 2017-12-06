@@ -15,22 +15,22 @@ var SILENT = 'silent';
 
 function makeEventPacket(eveType, targetInfo, event) {
     return {
-        type: eveType,
-        event: event,
+        type: eveType,                                        // 事件类型   mouseover   mouseout   mousemove
+        event: event,                                         // 标准化之后的事件对象，
         // target can only be an element that is not silent.
-        target: targetInfo.target,
+        target: targetInfo.target,                            // 我们自定义的element对象
         // topTarget can be a silent element.
-        topTarget: targetInfo.topTarget,
-        cancelBubble: false,
-        offsetX: event.zrX,
-        offsetY: event.zrY,
-        gestureEvent: event.gestureEvent,
-        pinchX: event.pinchX,
-        pinchY: event.pinchY,
-        pinchScale: event.pinchScale,
-        wheelDelta: event.zrDelta,
-        zrByTouch: event.zrByTouch,
-        which: event.which
+        topTarget: targetInfo.topTarget,                   //
+        cancelBubble: false,                               //
+        offsetX: event.zrX,                                 //   鼠标在 canvas中的坐标
+        offsetY: event.zrY,                                 //
+        gestureEvent: event.gestureEvent,                //
+        pinchX: event.pinchX,                              //
+        pinchY: event.pinchY,                              //
+        pinchScale: event.pinchScale,                     //
+        wheelDelta: event.zrDelta,                        //
+        zrByTouch: event.zrByTouch,                       //
+        which: event.which                                 //
     };
 }
 
@@ -39,7 +39,7 @@ EmptyProxy.prototype.dispose = function () {};
 
 var handlerNames = [
     'click', 'dblclick', 'mousewheel', 'mouseout',
-    'mouseup', 'mousedown', 'mousemove', 'contextmenu'
+    'mouseup', 'mousedown', 'mousemove', 'contextmenu' // 右键
 ];
 /**
  * @alias module:zrender/Handler
@@ -98,7 +98,7 @@ var Handler = function(storage, painter, proxy, painterRoot) {
     Draggable.call(this);
 
     util.each(handlerNames, function (name) {
-        proxy.on && proxy.on(name, this[name], this);
+        proxy.on && proxy.on(name, this[name], this);           //  把 这一系列的8个函数，  放到代理类的 _$handler 对象中， DOM事件触发会主动调用 代理类中的对应的函数
     }, this);
 };
 
@@ -106,11 +106,11 @@ Handler.prototype = {
 
     constructor: Handler,
 
-    mousemove: function (event) {
+    mousemove: function (event) {                           // 当移动鼠标之后，  获取坐标
         var x = event.zrX;
         var y = event.zrY;
 
-        var lastHovered = this._hovered;
+        var lastHovered = this._hovered;                        // 记录上一个 hover对象
         var lastHoveredTarget = lastHovered.target;
 
         // If lastHoveredTarget is removed from zr (detected by '__zr') by some API call
@@ -122,7 +122,7 @@ Handler.prototype = {
             lastHoveredTarget = lastHovered.target;
         }
 
-        var hovered = this._hovered = this.findHover(x, y);
+        var hovered = this._hovered = this.findHover(x, y);                                //  获取当前的鼠标hover对象   ，  以此来判断 mouseout  mousemove  mouseover，  然后对应的分发事件。
         var hoveredTarget = hovered.target;
 
         var proxy = this.proxy;
@@ -208,7 +208,7 @@ Handler.prototype = {
      * @param {string} eventName 事件名称
      * @param {Object} event 事件对象
      */
-    dispatchToElement: function (targetInfo, eventName, event) {
+    dispatchToElement: function (targetInfo, eventName, event) {     //   dispatchToElement(lastHovered, 'mouseout', event);   这里是真正的执行各个元素，或者总zr的  handler
         targetInfo = targetInfo || {};
         var el = targetInfo.target;
         if (el && el.silent) {
@@ -221,7 +221,7 @@ Handler.prototype = {
             el[eventHandler]
                 && (eventPacket.cancelBubble = el[eventHandler].call(el, eventPacket));
 
-            el.trigger(eventName, eventPacket);
+            el.trigger(eventName, eventPacket);                                             // 触发 元素的事件函数
 
             el = el.parent;
 

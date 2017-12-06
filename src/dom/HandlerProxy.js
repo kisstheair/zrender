@@ -103,7 +103,7 @@ var domHandlers = {                                                             
      * @param {Event} event
      */
     mousemove: function (event) {
-        event = normalizeEvent(this.dom, event);
+        event = normalizeEvent(this.dom, event);          // 格式化 （正规化）了一遍 再返回来？为什么？ 猜测一下  传入的event是真的event ，是最外层DOM上面的， 当最外层DOM触发后，返回来信息，处理一下，添加更具体的参数信息， 然后调用我们内置的事件函数，
 
         this.trigger('mousemove', event);
     },

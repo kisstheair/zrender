@@ -76,7 +76,7 @@ Eventful.prototype = {
             }
         }
 
-        _h[event].push({
+        _h[event].push({                                           // 把对应的handle 以及类型都放入_$handlers   {click:[ {h:handler,one:false,ctx:this} , {} ]            ,  dbclick:[]   ....}
             h: handler,
             one: false,
             ctx: context || this
@@ -144,11 +144,11 @@ Eventful.prototype = {
                 args = arrySlice.call(args, 1);
             }
 
-            var _h = this._$handlers[type];
+            var _h = this._$handlers[type];     // 拿出所有的事件数组。
             var len = _h.length;
             for (var i = 0; i < len;) {
                 // Optimize advise from backbone
-                switch (argLen) {
+                switch (argLen) {                      // 传入的参数的个数而已
                     case 1:
                         _h[i]['h'].call(_h[i]['ctx']);
                         break;
@@ -164,7 +164,7 @@ Eventful.prototype = {
                         break;
                 }
 
-                if (_h[i]['one']) {
+                if (_h[i]['one']) {              // 如果有one属性，运行一次之后 删除掉。
                     _h.splice(i, 1);
                     len--;
                 }

@@ -12,12 +12,12 @@ var isDomLevel2 = (typeof window !== 'undefined') && !!window.addEventListener;
 var MOUSE_EVENT_REG = /^(?:mouse|pointer|contextmenu|drag|drop)|click/;
 
 function getBoundingClientRect(el) {
-    // BlackBerry 5, iOS 3 (original iPhone) don't have getBoundingRect
+    // BlackBerry 5, iOS 3 (original iPhone) don't have getBoundingRect                       // 获取元素 上下左右边框的位置  返回的是 四个属性left、top、right、bottom的DOMRect对象
     return el.getBoundingClientRect ? el.getBoundingClientRect() : {left: 0, top: 0};
 }
 
 // `calculate` is optional, default false
-export function clientToLocal(el, e, out, calculate) {
+export function clientToLocal(el, e, out, calculate) {                                    // 鼠标的 client  坐标  ------转换为鼠标在canvas中的坐标。
     out = out || {};
 
     // According to the W3C Working Draft, offsetX and offsetY should be relative
@@ -42,7 +42,7 @@ export function clientToLocal(el, e, out, calculate) {
     // <https://bugs.jquery.com/ticket/8523#comment:14>
     // BTW3, In ff, offsetX/offsetY is always 0.
     else if (env.browser.firefox && e.layerX != null && e.layerX !== e.offsetX) {
-        out.zrX = e.layerX;
+        out.zrX = e.layerX;                                                                               //  这里的   zrX    zrY   就是   canvas 自己的坐标点。
         out.zrY = e.layerY;
     }
     // For IE6+, chrome, safari, opera. (When will ff support offsetX?)
@@ -56,10 +56,10 @@ export function clientToLocal(el, e, out, calculate) {
     }
 
     return out;
-}
+}           // 鼠标的 client  坐标  ------转换为鼠标在canvas中的坐标。
 
-function defaultGetZrXY(el, e, out) {
-    // This well-known method below does not support css transform.
+function defaultGetZrXY(el, e, out) {                                 // 获取的是相对于 DOM元素左上角的 相对坐标。   鼠标的位置 - 元素的左边框的位置 = 鼠标在元素中的横坐标
+    // This well-known method below does not support css transform.                                                 鼠标的位置 - 元素的上边框的位置 = 鼠标在元素中的纵坐标
     var box = getBoundingClientRect(el);
     out.zrX = e.clientX - box.left;
     out.zrY = e.clientY - box.top;
@@ -67,7 +67,7 @@ function defaultGetZrXY(el, e, out) {
 
 /**
  * 如果存在第三方嵌入的一些dom触发的事件，或touch事件，需要转换一下事件坐标.
- * `calculate` is optional, default false.                                     // 使正常化;使标准化
+ * `calculate` is optional, default false.                                     // 使正常化;使标准化   最主要的就是在event上添加2个属性 zrX 和zrY  转换为鼠标相对于canvas的坐标。
  */
 export function normalizeEvent(el, e, calculate) {
 
@@ -81,7 +81,7 @@ export function normalizeEvent(el, e, calculate) {
     var isTouch = eventType && eventType.indexOf('touch') >= 0;
 
     if (!isTouch) {
-        clientToLocal(el, e, e, calculate);
+        clientToLocal(el, e, e, calculate);                                                // 在 event上 添加2个左边属性  zrX  和zrY
         e.zrDelta = (e.wheelDelta) ? e.wheelDelta / 120 : -(e.detail || 0) / 3;
     }
     else {
