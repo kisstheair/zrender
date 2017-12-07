@@ -220,6 +220,16 @@ function getArrayDim(keyframes) {
     return isArrayLike(lastValue && lastValue[0]) ? 2 : 1;
 }
 
+
+
+
+//     this,                                  // animator
+//     easing,                                 // 缓动动画函数，  或者是缓动动画的 曲线字符串
+//     oneTrackDone,                           // 完成一个帧  之后要做的事，  是一个函数      （每次完成之后都要去执行一次，查看是否已经全部完成了， 如果全部完成了，  那就开始执行完成后的回调函数了）
+//     this._tracks[propName],                //应该是一个数组 [{time:0,value:20}, {time:20,value:100}]     。     _tracks是关键帧{ cx:[{time:0,value:20}, {time:20,value:100}]    ,   cy:[{} ]  }
+//     propName,                               // 属性名 cx
+//     forceAnimate                            //是否强制 渲染。
+
 function createTrackClip(animator, easing, oneTrackDone, keyframes, propName, forceAnimate) {
     var getter = animator._getter;
     var setter = animator._setter;
@@ -229,22 +239,22 @@ function createTrackClip(animator, easing, oneTrackDone, keyframes, propName, fo
     if (!trackLen) {
         return;
     }
-    // Guess data type
+    // Guess data type                     一个动画有多个关键帧， 每一个帧 都有一个value，   这个value是什么样的呢？  这里并不知道。  有可能是数字 ， 有可能是颜色吧 可能是字符串。
     var firstVal = keyframes[0].value;
     var isValueArray = isArrayLike(firstVal);
     var isValueColor = false;
     var isValueString = false;
 
     // For vertices morphing
-    var arrDim = isValueArray ? getArrayDim(keyframes) : 0;
+    var arrDim = isValueArray ? getArrayDim(keyframes) : 0;   // 如果 不是数组的话   arrDim=0，  如果是数组并且里面的值不是数组  arrDim=1，  如果是数组并且里面的数据还是数组 arrDim =2
 
     var trackMaxTime;
-    // Sort keyframe as ascending
+    // Sort keyframe as ascending                          关键帧按时间排序一下。
     keyframes.sort(function(a, b) {
         return a.time - b.time;
     });
 
-    trackMaxTime = keyframes[trackLen - 1].time;
+    trackMaxTime = keyframes[trackLen - 1].time;           //动画的最大时间。  （这个动画需要运行多久）
     // Percents of each keyframe
     var kfPercents = [];
     // Value of each keyframe
@@ -252,14 +262,14 @@ function createTrackClip(animator, easing, oneTrackDone, keyframes, propName, fo
     var prevValue = keyframes[0].value;
     var isAllValueEqual = true;
     for (var i = 0; i < trackLen; i++) {
-        kfPercents.push(keyframes[i].time / trackMaxTime);
+        kfPercents.push(keyframes[i].time / trackMaxTime);    // 记录每一个关键帧时间  -在整个动画中的百分比
         // Assume value is a color when it is a string
         var value = keyframes[i].value;
 
         // Check if value is equal, deep check if value is array
-        if (!((isValueArray && isArraySame(value, prevValue, arrDim))
+        if (!((isValueArray && isArraySame(value, prevValue, arrDim))           // 判断是不是这个value  和prevValue 完全相等。
             || (!isValueArray && value === prevValue))) {
-            isAllValueEqual = false;
+            isAllValueEqual = false;                                           // 动画有多个帧，  如果各个值都相等 ，动画没意义， ------这里判断的如果有一个不想等isAllValueEqual = false;    说明可以做动画
         }
         prevValue = value;
 
@@ -274,9 +284,9 @@ function createTrackClip(animator, easing, oneTrackDone, keyframes, propName, fo
                 isValueString = true;
             }
         }
-        kfValues.push(value);
+        kfValues.push(value);                                 // kfValues里面放入的是值，  可能是   原来的数值数组   /  color数组 / 原来的字符串。
     }
-    if (!forceAnimate && isAllValueEqual) {
+    if (!forceAnimate && isAllValueEqual) {                    // 这里如果不是强制动画，并且所有的值都相等， 那就别做了， 返回空。
         return;
     }
 
@@ -309,10 +319,10 @@ function createTrackClip(animator, easing, oneTrackDone, keyframes, propName, fo
         var rgba = [0, 0, 0, 0];
     }
 
-    var onframe = function (target, percent) {
+    var onframe = function (target, percent) {           // percent 是动画完成的百分比，  进度  范围是【0 --  1】
         // Find the range keyframes
         // kf1-----kf2---------current--------kf3
-        // find kf2 and kf3 and do interpolation
+        // find kf2 and kf3 and do interpolation  插补;
         var frame;
         // In the easing function like elasticOut, percent may less than 0
         if (percent < 0) {
@@ -419,12 +429,12 @@ function createTrackClip(animator, easing, oneTrackDone, keyframes, propName, fo
     };
 
     var clip = new Clip({
-        target: animator._target,
-        life: trackMaxTime,
-        loop: animator._loop,
-        delay: animator._delay,
-        onframe: onframe,
-        ondestroy: oneTrackDone
+        target: animator._target,               //  动画要执行的对象，  也就是 我们定义的Element对象
+        life: trackMaxTime,                      //  最大时间 （动画持续的时间）
+        loop: animator._loop,                   //  是不是循环
+        delay: animator._delay,                 //  默认用animator的延迟时间 0     this._delay = 0;
+        onframe: onframe,                        //
+        ondestroy: oneTrackDone                 // 每次Clip结束后要去执行的函数  ---------------------这里放的函数是：检测动画的所有片段都完成没，如果全部完成， 那就开始执行 完成后的回调函数。
     });
 
     if (easing && easing !== 'spline') {
@@ -442,9 +452,9 @@ function createTrackClip(animator, easing, oneTrackDone, keyframes, propName, fo
  * @param {Function} getter
  * @param {Function} setter
  */
-var Animator = function(target, loop, getter, setter) {
-    this._tracks = {};                                      // 关键帧， 轨迹对象。{ width:{{time:0,value:20}, {time:20,value:100}}    ,   height:{}   }
-    this._target = target;
+var Animator = function(target, loop, getter, setter) {      // Animator  是一个动画组合， 可以拆分长多个Clip 放入到自己的   _clipList 数组中，   当调用 Animation.addAnimator 的时候，会直接获取 这个动画的_clipList， 放入到  animation中去  。 （zr.animation.addAnimator(animator);）
+    this._tracks = {};                                      // 关键帧， 轨迹对象。{ cx:[{time:0,value:20}, {time:20,value:100}]    ,   cy:[{} ]  }
+    this._target = target;                                  //  {cx: 30, cy: 200, r: 30}
 
     this._loop = loop || false;
 
@@ -469,14 +479,14 @@ Animator.prototype = {
      * @param  {Object} props 关键帧的属性值，key-value表示
      * @return {module:zrender/animation/Animator}
      */
-    when: function(time /* ms */, props) {
+    when: function(time /* ms */, props) {               // when方法 就是人为的去给动画添加  关键帧状态值， 当时间为多少时---什么状态，  当多少时-----什么状态。 circle.animate('shape', true) .when(5000, {}） .when(6000, {）
         var tracks = this._tracks;                      // 应该是记录  一系列关键帧的对象，    跟踪摄影;留下（脏）足迹;
         for (var propName in props) {
             if (!props.hasOwnProperty(propName)) {
                 continue;
             }
 
-            if (!tracks[propName]) {
+            if (!tracks[propName]) {                            // 如果关键帧中  还没有这个属性的动画，  那么初始化一下，  并且设置 time：0的关键帧。
                 tracks[propName] = [];
                 // Invalid value
                 var value = this._getter(this._target, propName);
@@ -562,13 +572,17 @@ Animator.prototype = {
         };
 
         var lastClip;
-        for (var propName in this._tracks) {                       //根据什么  去创建一个一个的 Clip      _tracks中的属性？   是 关键帧对象 ，每一个propName代表的是一个 属性名称，对应的是关键帧对象合计。
+        for (var propName in this._tracks) {                       //根据什么？ 应该是一种类型 比如形状shape  或则是style  去创建一个一个的 Clip     ，一种类型有几个关键帧 shape:[{time:0,value:20}, {time:20,value:100}，，，] 成为一个chip
             if (!this._tracks.hasOwnProperty(propName)) {
                 continue;
             }
             var clip = createTrackClip(
-                this, easing, oneTrackDone,
-                this._tracks[propName], propName, forceAnimate
+                this,                                  // animator
+                easing,                                 // 缓动动画函数，  或者是缓动动画的 曲线字符串
+                oneTrackDone,                           // 完成一个帧  之后要做的事，  是一个函数      （每次完成之后都要去执行一次，查看是否已经全部完成了， 如果全部完成了，  那就开始执行完成后的回调函数了）
+                this._tracks[propName],                //应该是一个数组 [{time:0,value:20}, {time:20,value:100}]     。     _tracks是关键帧 { shape:[{time:0,value:20}, {time:20,value:100}]    ,   style:[{} ]  }   ,   height:[{} ]  }
+                propName,                               // 属性名 shape
+                forceAnimate                            //是否强制 渲染。
             );
             if (clip) {
                 this._clipList.push(clip);

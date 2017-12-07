@@ -153,7 +153,7 @@ Animation.prototype = {
         // Remove the finished clip           删除掉  动画结束的 chip
         for (var i = 0; i < len;) {
             if (clips[i]._needsRemove) {
-                clips[i] = clips[len - 1];          //把最后一个替换到当前的元素，   然后删除最后的
+                clips[i] = clips[len - 1];          //把最后一个替换到当前的元素，   然后删除最后的，  顺序乱了呀？  难道不考虑顺序？
                 clips.pop();
                 len--;
             }

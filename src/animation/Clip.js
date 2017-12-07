@@ -15,7 +15,7 @@
 
 import easingFuncs from './easing';
 
-function Clip(options) {
+function Clip(options) {                                       // 主动画控制器，  把动画的各种参数，时间，对象，是否循环，执行曲线，执行的函数。。。。   都打包成一个Clip对象， 是动画的最基本单位  放入Animation，会循环获取Clip数组去挨个执行。
 
     this._target = options.target;
 
@@ -24,19 +24,19 @@ function Clip(options) {
     // 延时
     this._delay = options.delay || 0;
     // 开始时间
-    // this._startTime = new Date().getTime() + this._delay;// 单位毫秒
-    this._initialized = false;                           // 已初始化的
+    // this._startTime = new Date().getTime() + this._delay;             // 单位毫秒
+    this._initialized = false;                                        // 已初始化的
 
     // 是否循环
-    this.loop = options.loop == null ? false : options.loop;
+    this.loop = options.loop == null ? false : options.loop;          // 是不是循环执行
 
     this.gap = options.gap || 0;
 
-    this.easing = options.easing || 'Linear';
+    this.easing = options.easing || 'Linear';                        // 执行的 曲线
 
-    this.onframe = options.onframe;
-    this.ondestroy = options.ondestroy;
-    this.onrestart = options.onrestart;
+    this.onframe = options.onframe;                                   // 当执行的时候的函数
+    this.ondestroy = options.ondestroy;                               // 当  的函数
+    this.onrestart = options.onrestart;                               // 当重启的函数
 
     this._pausedTime = 0;
     this._paused = false;
@@ -59,7 +59,7 @@ Clip.prototype = {
             return;
         }
 
-        var percent = (globalTime - this._startTime - this._pausedTime) / this._life;
+        var percent = (globalTime - this._startTime - this._pausedTime) / this._life;          // 应该是 动画进度的百分比吧，    就是动画已经完成了  多少了    【0 -- 1】
 
         // 还没开始
         if (percent < 0) {

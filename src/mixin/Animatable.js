@@ -37,7 +37,7 @@ Animatable.prototype = {
      *         .done(function(){ // Animation done })
      *         .start()
      */
-    animate: function (path, loop) {
+    animate: function (path, loop) {         // path  总共有2中 样式  style {stroke: '#000',fill: null}  和形状 shape { cx: 0,cy: 0, r: 0,startAngle: 0,endAngle: Math.PI * 2, clockwise: true}
         var target;
         var animatingShape = false;
         var el = this;
@@ -51,14 +51,14 @@ Animatable.prototype = {
                 if (!prop) {
                     continue;
                 }
-                prop = prop[pathSplitted[i]];
+                prop = prop[pathSplitted[i]];         // 经过pathSplitted.length; 获取后  -----如果path=shape ，则Prop= { cx: 0,cy: 0, r: 0}  ---如果path = Art.shape.cx ，则Prop =具体那个对像的。。。  ---如果传入的是Art           // el  是 Art  Circle  Rect  。。。的统称，  所以 el 必须有这些属性。
             }
             if (prop) {
-                target = prop;
+                target = prop;         // target =  {cx: 30, cy: 200, r: 30}
             }
         }
         else {
-            target = el;
+            target = el;               // 如果传入的为空的话   那么 久针对 Element这个元素的具体 子类了sub  Art。
         }
 
         if (!target) {
