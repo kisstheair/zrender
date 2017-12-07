@@ -22,7 +22,7 @@ function defaultSetter(target, key, value) {
  * @param  {number} percent
  * @return {number}
  */
-function interpolateNumber(p0, p1, percent) {
+function interpolateNumber(p0, p1, percent) {          //根据 p0  ---p1 的进度 percent   返回中间的一个值。
     return (p1 - p0) * percent + p0;
 }
 
@@ -275,7 +275,7 @@ function createTrackClip(animator, easing, oneTrackDone, keyframes, propName, fo
 
         // Try converting a string to a color array
         if (typeof value == 'string') {
-            var colorArray = color.parse(value);
+            var colorArray = color.parse(value);                    // 解析出来的一定是 rgbaArr;   [255,255,0,1];  因为 后面要做插值运算， 要纯数字的，必然没法。
             if (colorArray) {
                 value = colorArray;
                 isValueColor = true;
@@ -416,14 +416,14 @@ function createTrackClip(animator, easing, oneTrackDone, keyframes, propName, fo
                     value = rgba2String(rgba);
                 }
                 else if (isValueString) {
-                    // String is step(0.5)
+                    // String is step(0.5)         // 如果是字符串的话，不能插值运算了， 只能看w的   》0.5 取后面的   小于0.5 取前面的。
                     return interpolateString(kfValues[frame], kfValues[frame + 1], w);
                 }
                 else {
                     value = interpolateNumber(kfValues[frame], kfValues[frame + 1], w);
                 }
                 setter(
-                    target,
+                    target,                    //最终的目的就是修改target的  值/////////////////////////////////////////////////////////////////////////////////////////////////
                     propName,
                     value
                 );
@@ -456,8 +456,8 @@ function createTrackClip(animator, easing, oneTrackDone, keyframes, propName, fo
  * @param {Function} setter
  */
 var Animator = function(target, loop, getter, setter) {      // Animator  是一个动画组合， 可以拆分长多个Clip 放入到自己的   _clipList 数组中，   当调用 Animation.addAnimator 的时候，会直接获取 这个动画的_clipList， 放入到  animation中去  。 （zr.animation.addAnimator(animator);）
-    this._tracks = {};                                      // 关键帧， 轨迹对象。{ cx:[{time:0,value:20}, {time:20,value:100}]    ,   cy:[{} ]  }
-    this._target = target;                                  // target是动画的目标，---- ---- 动画创建的时候： target=获取的初始状态----- 通过circle.animate('shape', true)获取   {cx: 30, cy: 200, r: 30}
+    this._tracks = {};                                      // 关键帧， 轨迹对象。{ cx:[{time:0,value:20}, {time:20,value:100}]    ,   cy:[{} ]  }   对象调用 .when(5000, {}）向里面添加关键帧。
+    this._target = target;                                  // target是动画的目标，---- ---- 动画创建的时候： target=获取的初始状态----- 通过circle.animate('shape', true)获取   {cx: 30, cy: 200, r: 30}  ，然后 _target被赋予 _tracks关键帧的最后一帧。
 
     this._loop = loop || false;
 
@@ -575,7 +575,7 @@ Animator.prototype = {
         };
 
         var lastClip;
-        for (var propName in this._tracks) {                       //根据什么？ 应该是一个绘制图形的元素，比如形状长度 x，宽度 y ，半径 r   去创建一个一个的 Clip     ，每个有几个关键帧 cx:[{time:0,value:20}, {time:20,value:100}] 成为一个chip
+        for (var propName in this._tracks) {                       //根据什么？ 应该是一个绘制图形的元素，比如形状长度 x，宽度 y ，半径 r   去创建一个一个的 Clip  是动画控制器。   ，每个有几个关键帧 cx:[{time:0,value:20}, {time:20,value:100}] 成为一个chip
             if (!this._tracks.hasOwnProperty(propName)) {
                 continue;
             }

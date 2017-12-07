@@ -46,7 +46,7 @@ Clip.prototype = {
 
     constructor: Clip,
 
-    step: function (globalTime, deltaTime) {               // 这里的意思就是  globalTime ：从动画执行，现在的时间是。。。      deltaTime ： 从动画执行经过了多长时间。
+    step: function (globalTime, deltaTime) {               // 这里的意思就是  globalTime ：从动画执行，现在的时间是。。。      deltaTime ： 从动画执行经过了多长时间。   这里是从时间的角度计算出动画进度百分比 然后换算出来的值传入Clip
         // Set startTime on first step, or _startTime may has milleseconds different between clips
         // PENDING
         if (!this._initialized) {
@@ -74,7 +74,7 @@ Clip.prototype = {
             ? easingFunc(percent)
             : percent;
 
-        this.fire('frame', schedule);                                                  //执行的是 this.onframe(this._target, schedule)
+        this.fire('frame', schedule);                                //执行的是 this.onframe(this._target, schedule) 更新目标的状态。  是根据时间来推算出百分比的，所以调用的快慢与动画的完成情况没关系  ，调用的快，只会刷新的频率高。
 
         // 结束
         if (percent == 1) {
