@@ -63,11 +63,11 @@ function interpolateArray(p0, p1, percent, out, arrDim) {
 }
 
 // arr0 is source array, arr1 is target array.
-// Do some preprocess to avoid error happened when interpolating from arr0 to arr1
+// Do some preprocess to avoid error happened when interpolating from arr0 to arr1        arr0 是第几个value对应的数组，  arr1是最后一个value对应的数组。 这里想要做成一致，避免出错。
 function fillArr(arr0, arr1, arrDim) {
     var arr0Len = arr0.length;
     var arr1Len = arr1.length;
-    if (arr0Len !== arr1Len) {
+    if (arr0Len !== arr1Len) {                                                        // 如果数组的长度不相同的话，  前面的长，多余的去掉保持和后面最后一个长度一致， 如果后面的长，后面多余的添加到前面当成默认。
         // FIXME Not work for TypedArray
         var isPreviousLarger = arr0Len > arr1Len;
         if (isPreviousLarger) {
@@ -83,7 +83,7 @@ function fillArr(arr0, arr1, arrDim) {
             }
         }
     }
-    // Handling NaN value
+    // Handling NaN value                              上面解决了长度的问题， 这里处理一下各个值得问题，如果是NaN了，   把最后一个的值填充到前面。
     var len2 = arr0[0] && arr0[0].length;
     for (var i = 0; i < arr0.length; i++) {
         if (arrDim === 1) {
@@ -291,7 +291,7 @@ function createTrackClip(animator, easing, oneTrackDone, keyframes, propName, fo
     }
 
     var lastValue = kfValues[trackLen - 1];
-    // Polyfill array and NaN value
+    // Polyfill array and NaN value                          遍历kfValues的所有的值，  长度要和最后一个保持一致，  如果有NaN值，  最后一个的值覆盖到前面。
     for (var i = 0; i < trackLen - 1; i++) {
         if (isValueArray) {
             fillArr(kfValues[i], lastValue, arrDim);
@@ -302,14 +302,14 @@ function createTrackClip(animator, easing, oneTrackDone, keyframes, propName, fo
             }
         }
     }
-    isValueArray && fillArr(getter(animator._target, propName), lastValue, arrDim);
+    isValueArray && fillArr(getter(animator._target, propName), lastValue, arrDim);           //把动画的结束值赋给  动画的_target，，那么动画的_target就代表的是动画的 目标，动画的结束状态。
 
     // Cache the key of last frame to speed up when
     // animation playback is sequency
     var lastFrame = 0;
-    var lastFramePercent = 0;
+    var lastFramePercent = 0;            //每一个动画 划分为 多个chip ，也就是多个变动，多个关键帧         ，  这里是保存整个动画进度的地方，   下面的单独的Clip 的onframe函数 每次执行都会修改整体的进度。
     var start;
-    var w;
+    var w;                              //   （这次的进度值-上次的进度）/ 值的变动量             (percent - kfPercents[frame]) / range;
     var p0;
     var p1;
     var p2;
@@ -319,16 +319,16 @@ function createTrackClip(animator, easing, oneTrackDone, keyframes, propName, fo
         var rgba = [0, 0, 0, 0];
     }
 
-    var onframe = function (target, percent) {           // percent 是动画完成的百分比，  进度  范围是【0 --  1】
+    var onframe = function (target, percent) {           // target是动画的结束状态，目标         percent 是动画完成的百分比，  进度  范围是【0 --  1】
         // Find the range keyframes
         // kf1-----kf2---------current--------kf3
         // find kf2 and kf3 and do interpolation  插补;
         var frame;
         // In the easing function like elasticOut, percent may less than 0
-        if (percent < 0) {
+        if (percent < 0) {                                                  //判断这次动画的进度到哪里了？  刚开始，还是上次进度50% 这次却传进来20%，    还是正常的进度上次50% 这次60%
             frame = 0;
         }
-        else if (percent < lastFramePercent) {
+        else if (percent < lastFramePercent) {                           // 如果这次传进来的进度  ，还没有上次的进度多，  难道要倒回去播放呀！ 对呀，从新找到比传进来的进度小的上一次关键帧 。
             // Start from next key
             // PENDING start from lastFrame ?
             start = Math.min(lastFrame + 1, trackLen - 1);
@@ -340,7 +340,7 @@ function createTrackClip(animator, easing, oneTrackDone, keyframes, propName, fo
             // PENDING really need to do this ?
             frame = Math.min(frame, trackLen - 2);
         }
-        else {
+        else {                                                              // 如果这次传进来的进度正常， 那也有可能是跳着关键帧找的，    那么找到percent 的前一个关键帧作为上一次的关键帧。
             for (frame = lastFrame; frame < trackLen; frame++) {
                 if (kfPercents[frame] > percent) {
                     break;
@@ -348,17 +348,17 @@ function createTrackClip(animator, easing, oneTrackDone, keyframes, propName, fo
             }
             frame = Math.min(frame - 1, trackLen - 2);
         }
-        lastFrame = frame;
-        lastFramePercent = percent;
+        lastFrame = frame;                                      // 上一个关键帧
+        lastFramePercent = percent;                              // 上一个关键帧的 进度
 
-        var range = (kfPercents[frame + 1] - kfPercents[frame]);
+        var range = (kfPercents[frame + 1] - kfPercents[frame]);    //动画进度变动量。
         if (range === 0) {
             return;
         }
         else {
-            w = (percent - kfPercents[frame]) / range;
+            w = (percent - kfPercents[frame]) / range;              //     这次的进度到上一个的关键的间距 / 上一个关键帧到下一个关键的幅度   =  这次的动画进度在2个关键帧中间的占比
         }
-        if (useSpline) {
+        if (useSpline) {                                              // 如果 函数曲线 easing === 'spline';   花键;方栓;齿条;
             p1 = kfValues[frame];
             p0 = kfValues[frame === 0 ? frame : frame - 1];
             p2 = kfValues[frame > trackLen - 2 ? trackLen - 1 : frame + 1];
@@ -407,8 +407,11 @@ function createTrackClip(animator, easing, oneTrackDone, keyframes, propName, fo
                 var value;
                 if (isValueColor) {
                     interpolateArray(
-                        kfValues[frame], kfValues[frame + 1], w,
-                        rgba, 1
+                        kfValues[frame],            //上次的值
+                        kfValues[frame + 1],        //下次的值
+                        w,                          //（这次的进度值-上次的进度）/ 值的变动量        (percent - kfPercents[frame]) / range;  占比
+                        rgba,                      //
+                        1                          //
                     );
                     value = rgba2String(rgba);
                 }
@@ -454,7 +457,7 @@ function createTrackClip(animator, easing, oneTrackDone, keyframes, propName, fo
  */
 var Animator = function(target, loop, getter, setter) {      // Animator  是一个动画组合， 可以拆分长多个Clip 放入到自己的   _clipList 数组中，   当调用 Animation.addAnimator 的时候，会直接获取 这个动画的_clipList， 放入到  animation中去  。 （zr.animation.addAnimator(animator);）
     this._tracks = {};                                      // 关键帧， 轨迹对象。{ cx:[{time:0,value:20}, {time:20,value:100}]    ,   cy:[{} ]  }
-    this._target = target;                                  //  {cx: 30, cy: 200, r: 30}
+    this._target = target;                                  // target是动画的目标，---- ---- 动画创建的时候： target=获取的初始状态----- 通过circle.animate('shape', true)获取   {cx: 30, cy: 200, r: 30}
 
     this._loop = loop || false;
 
@@ -572,7 +575,7 @@ Animator.prototype = {
         };
 
         var lastClip;
-        for (var propName in this._tracks) {                       //根据什么？ 应该是一种类型 比如形状shape  或则是style  去创建一个一个的 Clip     ，一种类型有几个关键帧 shape:[{time:0,value:20}, {time:20,value:100}，，，] 成为一个chip
+        for (var propName in this._tracks) {                       //根据什么？ 应该是一个绘制图形的元素，比如形状长度 x，宽度 y ，半径 r   去创建一个一个的 Clip     ，每个有几个关键帧 cx:[{time:0,value:20}, {time:20,value:100}] 成为一个chip
             if (!this._tracks.hasOwnProperty(propName)) {
                 continue;
             }
@@ -580,7 +583,7 @@ Animator.prototype = {
                 this,                                  // animator
                 easing,                                 // 缓动动画函数，  或者是缓动动画的 曲线字符串
                 oneTrackDone,                           // 完成一个帧  之后要做的事，  是一个函数      （每次完成之后都要去执行一次，查看是否已经全部完成了， 如果全部完成了，  那就开始执行完成后的回调函数了）
-                this._tracks[propName],                //应该是一个数组 [{time:0,value:20}, {time:20,value:100}]     。     _tracks是关键帧 { shape:[{time:0,value:20}, {time:20,value:100}]    ,   style:[{} ]  }   ,   height:[{} ]  }
+                this._tracks[propName],                //应该是一个数组 [{time:0,value:20}, {time:20,value:100}]    。     _tracks是关键帧 { cx:[{time:0,value:20}, {time:20,value:100}]    ,   cy:[{} ]  }
                 propName,                               // 属性名 shape
                 forceAnimate                            //是否强制 渲染。
             );

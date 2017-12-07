@@ -54,7 +54,7 @@ Animatable.prototype = {
                 prop = prop[pathSplitted[i]];         // 经过pathSplitted.length; 获取后  -----如果path=shape ，则Prop= { cx: 0,cy: 0, r: 0}  ---如果path = Art.shape.cx ，则Prop =具体那个对像的。。。  ---如果传入的是Art           // el  是 Art  Circle  Rect  。。。的统称，  所以 el 必须有这些属性。
             }
             if (prop) {
-                target = prop;         // target =  {cx: 30, cy: 200, r: 30}
+                target = prop;         // target =  {cx: 30, cy: 200, r: 30}     target是动画创建的时候获取的初始状态----- circle.animate('shape', true)
             }
         }
         else {
