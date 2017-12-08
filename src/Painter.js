@@ -157,13 +157,13 @@ var Painter = function (root, storage, opts) {
      * @type {Array.<number>}
      * @private
      */
-    var zlevelList = this._zlevelList = [];           //是一个数组， 应该是记录的 layers中每个key数组。
+    var zlevelList = this._zlevelList = [];           //层级列表  [0,1]  那么说明有两层        记录的 layers中每个key数组。
 
     /**
      * @type {Object.<string, module:zrender/Layer>}
      * @private
      */
-    var layers = this._layers = {};                  //
+    var layers = this._layers = {};                  //从层级列表中获取值------可以当 layers的 key 来获取对应位置的  层layer
 
     /**
      * @type {Object.<string, Object>}
@@ -461,9 +461,9 @@ Painter.prototype = {
             ctx.restore();
         }
 
-        for (var i = 0, l = list.length; i < l; i++) {
+        for (var i = 0, l = list.length; i < l; i++) {                  // 把storage中的 Sub形状遍历一下  var list = this.storage.getDisplayList(true);
             var el = list[i];
-            var elZLevel = this._singleCanvas ? 0 : el.zlevel;
+            var elZLevel = this._singleCanvas ? 0 : el.zlevel;       // 层级
 
             var elFrame = el.__frame;
 
@@ -604,7 +604,7 @@ Painter.prototype = {
                 // New clipping state
                 if (clipPaths) {
                     ctx.save();
-                    doClip(clipPaths, ctx);
+                    doClip(clipPaths, ctx);                                           // clip 修剪剪切，  绘制形状
                     scope.prevClipLayer = currentLayer;
                     scope.prevElClipPaths = clipPaths;
                 }
@@ -735,7 +735,7 @@ Painter.prototype = {
     },
 
     // Iterate each buildin layer                              图层 也分为 内建 和外来的，  内建的图层有一个属性__builtin__为true
-    eachBuiltinLayer: function (cb, context) {
+    eachBuiltinLayer: function (cb, context) {                // 传入一个函数， 然后一个一个把内建layer传进去， 让函数操作一下。
         var zlevelList = this._zlevelList;
         var layer;
         var z;

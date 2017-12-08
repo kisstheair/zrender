@@ -35,7 +35,7 @@ Path.prototype = {
 
     strokeContainThreshold: 5,
 
-    brush: function (ctx, prevEl) {
+    brush: function (ctx, prevEl) {                                //  绘制图形  这里分了2部分，  一部分绘制形状， 一部分刷上颜色。  这里是刷颜色
         var style = this.style;
         var path = this.path || pathProxyForDraw;
         var hasStroke = style.hasStroke();
