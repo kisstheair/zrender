@@ -463,7 +463,7 @@ Painter.prototype = {
 
         for (var i = 0, l = list.length; i < l; i++) {                  // 把storage中的 Sub形状遍历一下  var list = this.storage.getDisplayList(true);
             var el = list[i];
-            var elZLevel = this._singleCanvas ? 0 : el.zlevel;       // 层级
+            var elZLevel = this._singleCanvas ? 0 : el.zlevel;       // 层级   如果根节点是canvas  那就0层，   否则为图形的层 （图形的层默认也为0）
 
             var elFrame = el.__frame;
 
@@ -474,7 +474,7 @@ Painter.prototype = {
                 currentProgressiveLayer = null;
             }
 
-            // Change draw layer
+            // Change draw layer                                         如果来的这个元素 的层级和当前画布上的层级不一样，  或则当前画布上还没有层级-------那就需要从层级中获取一个层 或者再创建一个。
             if (currentZLevel !== elZLevel) {
                 if (ctx) {
                     ctx.restore();
@@ -483,7 +483,7 @@ Painter.prototype = {
                 // Reset scope
                 scope = {};
 
-                // Only 0 zlevel if only has one canvas
+                // Only 0 zlevel if only has one canvas                 把当前的图层  切换到需要绘制图形的图层。
                 currentZLevel = elZLevel;
                 currentLayer = this.getLayer(currentZLevel);
 
@@ -497,7 +497,7 @@ Painter.prototype = {
                 ctx = currentLayer.ctx;
                 ctx.save();
 
-                // Reset the count
+                // Reset the count                   重置一下，计数用
                 currentLayer.__unusedCount = 0;
 
                 if (currentLayer.__dirty || paintAll) {
@@ -575,16 +575,16 @@ Painter.prototype = {
         var m = el.transform;
         if (
             (currentLayer.__dirty || forcePaint)
-            // Ignore invisible element
+            // Ignore invisible element                                                //  忽视  invisible 不可见的元素
             && !el.invisible
             // Ignore transparent element
-            && el.style.opacity !== 0
+            && el.style.opacity !== 0                                                  //忽略 透明度为0的
             // Ignore scale 0 element, in some environment like node-canvas
             // Draw a scale 0 element can cause all following draw wrong
             // And setTransform with scale 0 will cause set back transform failed.
-            && !(m && !m[0] && !m[3])
+            && !(m && !m[0] && !m[3])                                                    // 忽视 通过变换  或则缩放  到 0的元素
             // Ignore culled element
-            && !(el.culling && isDisplayableCulled(el, this._width, this._height))
+            && !(el.culling && isDisplayableCulled(el, this._width, this._height))   //   忽视掉   超出了可视区域。
         ) {
 
             var clipPaths = el.__clipPaths;

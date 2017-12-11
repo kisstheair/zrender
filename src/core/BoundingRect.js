@@ -10,7 +10,7 @@ var mathMin = Math.min;
 var mathMax = Math.max;
 
 /**
- * @alias module:echarts/core/BoundingRect
+ * @alias module:echarts/core/BoundingRect              外接矩形（根据开始位置，以及长宽建立的矩形）   可以复制， 联合 可以测 是否包含某个点，   是否包含某个矩形。
  */
 function BoundingRect(x, y, width, height) {
 
