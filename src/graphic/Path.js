@@ -42,13 +42,13 @@ Path.prototype = {
         var hasFill = style.hasFill();
         var fill = style.fill;
         var stroke = style.stroke;
-        var hasFillGradient = hasFill && !!(fill.colorStops);
-        var hasStrokeGradient = hasStroke && !!(stroke.colorStops);
-        var hasFillPattern = hasFill && !!(fill.image);
-        var hasStrokePattern = hasStroke && !!(stroke.image);
+        var hasFillGradient = hasFill && !!(fill.colorStops);           // 是否具有渐变填充
+        var hasStrokeGradient = hasStroke && !!(stroke.colorStops);     // 是否具有渐变绘制线
+        var hasFillPattern = hasFill && !!(fill.image);                  // 是否  有填充图案
+        var hasStrokePattern = hasStroke && !!(stroke.image);            // 是否具有 图案 绘制线
 
         style.bind(ctx, this, prevEl);
-        this.setTransform(ctx);
+        this.setTransform(ctx);                                         //  这里开始设置变换  和下面的 重置变换 restoreTransform是一对，    中间是绘图 和填充的过程
 
         if (this.__dirty) {
             var rect;

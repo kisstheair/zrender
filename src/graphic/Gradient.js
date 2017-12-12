@@ -1,6 +1,6 @@
 
 /**
- * @param {Array.<Object>} colorStops
+ * @param {Array.<Object>} colorStops               步进的  梯度的  渐变的。
  */
 var Gradient = function (colorStops) {
 

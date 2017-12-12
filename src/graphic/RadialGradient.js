@@ -7,7 +7,7 @@ import Gradient from './Gradient';
  * @param {number} [y=0.5]
  * @param {number} [r=0.5]
  * @param {Array.<Object>} [colorStops]
- * @param {boolean} [globalCoord=false]
+ * @param {boolean} [globalCoord=false]                   径向渐变
  */
 var RadialGradient = function (x, y, r, colorStops, globalCoord) {
     // Should do nothing more in this constructor. Because gradient can be

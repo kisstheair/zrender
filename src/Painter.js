@@ -82,13 +82,13 @@ function isClipPathChanged(clipPaths, prevClipPaths) {
 
 function doClip(clipPaths, ctx) {
     for (var i = 0; i < clipPaths.length; i++) {
-        var clipPath = clipPaths[i];
+        var clipPath = clipPaths[i];                  // 一个clipPath相当于一个 形状，  比如圆形 ，正方形 。。。
 
-        clipPath.setTransform(ctx);
-        ctx.beginPath();
-        clipPath.buildPath(ctx, clipPath.shape);
-        ctx.clip();
-        // Transform back
+        clipPath.setTransform(ctx);                  // 设置变换，和后面的恢复变换成一对，  每次绘制前先设置变换-----完成后再恢复变换。
+        ctx.beginPath();                             // beginPath 是canvas 自带的api，就是告诉一下 我要开始绘制了
+        clipPath.buildPath(ctx, clipPath.shape);    // 调用 buildPath函数  ，绘制路径。
+        ctx.clip();                                // clip() 方法从原始画布中剪切任意形状和尺寸。  一旦剪切了某个区域，则所有之后的绘图都会被限制在被剪切的区域内（不能访问画布上的其他区域）。您也可以在使用 clip() 方法前通过使用 save() 方法对当前画布区域进行保存，行恢复（通过 restore() 方法）
+        // Transform back                          为什么要调用  clip？ 为了组合图形？  比如先画个圆，再画一个正方形，那么成的形状就是交集。
         clipPath.restoreTransform(ctx);
     }
 }
@@ -122,7 +122,7 @@ var Painter = function (root, storage, opts) {
     this.type = 'canvas';
 
     // In node environment using node-canvas
-    var singleCanvas = !root.nodeName          // In node ?        // 根节点是 canvas   那就是true，
+    var singleCanvas = !root.nodeName          // In node ?        // 根节点是canvas   那就是true，       如果 传入的是canvas元素，那就在一个canvas上绘图？    如果不是canvas那多层绘图？
         || root.nodeName.toUpperCase() === 'CANVAS';
 
     this._opts = opts = util.extend({}, opts || {});
@@ -163,7 +163,7 @@ var Painter = function (root, storage, opts) {
      * @type {Object.<string, module:zrender/Layer>}
      * @private
      */
-    var layers = this._layers = {};                  //从层级列表中获取值------可以当 layers的 key 来获取对应位置的  层layer
+    var layers = this._layers = {};                  //从层级列表中获取值------可以当 layers的 key 来获取对应位置的  层layer         谁给_layers添加数据？ 绘图图形的是偶doPaint。。发现没有就会创建一个保存在这里
 
     /**
      * @type {Object.<string, Object>}
@@ -262,17 +262,17 @@ Painter.prototype = {
      */
     refresh: function (paintAll) {
 
-        var list = this.storage.getDisplayList(true);
+        var list = this.storage.getDisplayList(true);            // 从storage中  获取所有的要绘制的元素。
 
         var zlevelList = this._zlevelList;
 
-        this._paintList(list, paintAll);
+        this._paintList(list, paintAll);                       //全部绘制一下。
 
         // Paint custum layers                                  绘制layer层
         for (var i = 0; i < zlevelList.length; i++) {
             var z = zlevelList[i];
             var layer = this._layers[z];
-            if (!layer.__builtin__ && layer.refresh) {
+            if (!layer.__builtin__ && layer.refresh) {        //不是内建的  图层  ，去刷新一下？  为什么？
                 layer.refresh();
             }
         }
@@ -325,7 +325,7 @@ Painter.prototype = {
     },
 
     refreshHover: function () {
-        var hoverElements = this._hoverElements;
+        var hoverElements = this._hoverElements;                //hover 专有一个图层_hoverlayer，    所有的元素 在 _hoverElements中
         var len = hoverElements.length;
         var hoverLayer = this._hoverlayer;
         hoverLayer && hoverLayer.clear();
@@ -465,7 +465,7 @@ Painter.prototype = {
             var el = list[i];
             var elZLevel = this._singleCanvas ? 0 : el.zlevel;       // 层级   如果根节点是canvas  那就0层，   否则为图形的层 （图形的层默认也为0）
 
-            var elFrame = el.__frame;
+            var elFrame = el.__frame;                                // 这里__frame  找不到源头，那就是undefined，  >0   <0 都是false
 
             // Flush at current context
             // PENDING
@@ -575,7 +575,7 @@ Painter.prototype = {
         var m = el.transform;
         if (
             (currentLayer.__dirty || forcePaint)
-            // Ignore invisible element                                                //  忽视  invisible 不可见的元素
+            // Ignore invisible element                                             //  忽视  invisible 不可见的元素
             && !el.invisible
             // Ignore transparent element
             && el.style.opacity !== 0                                                  //忽略 透明度为0的
@@ -604,14 +604,14 @@ Painter.prototype = {
                 // New clipping state
                 if (clipPaths) {
                     ctx.save();
-                    doClip(clipPaths, ctx);                                           // clip 修剪剪切，  绘制形状
+                    doClip(clipPaths, ctx);                                     // clip  设置剪切的区域，  把某个空间当做是以后有效的空间， 其他区域不可访问。
                     scope.prevClipLayer = currentLayer;
                     scope.prevElClipPaths = clipPaths;
                 }
             }
             el.beforeBrush && el.beforeBrush(ctx);
 
-            el.brush(ctx, scope.prevEl || null);
+            el.brush(ctx, scope.prevEl || null);                               // 这里面是 设置好颜色之后绘制图形。    那前面的doClip  算什么？  为这里框定一个范围？ 对的就是这样的。
             scope.prevEl = el;
 
             el.afterBrush && el.afterBrush(ctx);

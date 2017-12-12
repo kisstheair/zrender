@@ -75,22 +75,22 @@ Style.prototype = {
     opacity: 1,
 
     /**
-     * @type {Array.<number>}
+     * @type {Array.<number>}  线划
      */
     lineDash: null,
 
     /**
-     * @type {number}
+     * @type {number}         线划偏移
      */
     lineDashOffset: 0,
 
     /**
-     * @type {number}
+     * @type {number}          阴影模糊
      */
     shadowBlur: 0,
 
     /**
-     * @type {number}
+     * @type {number}         阴影偏移X
      */
     shadowOffsetX: 0,
 
@@ -100,12 +100,12 @@ Style.prototype = {
     shadowOffsetY: 0,
 
     /**
-     * @type {number}
+     * @type {number}         线宽
      */
     lineWidth: 1,
 
     /**
-     * If stroke ignore scale
+     * If stroke ignore scale      无缩放绘制
      * @type {Boolean}
      */
     strokeNoScale: false,
@@ -113,7 +113,7 @@ Style.prototype = {
     // Bounding rect text configuration
     // Not affected by element transform
     /**
-     * @type {string}
+     * @type {string}                文本
      */
     text: null,
 
@@ -122,7 +122,7 @@ Style.prototype = {
      * `fontSize`, `fontStyle`, `fontWeight`, `fontFamily`.
      * So do not visit it directly in upper application (like echarts),
      * but use `contain/text#makeFont` instead.
-     * @type {string}
+     * @type {string}                            字体
      */
     font: null,
 
@@ -134,7 +134,7 @@ Style.prototype = {
     textFont: null,
 
     /**
-     * It helps merging respectively, rather than parsing an entire font string.
+     * It helps merging respectively, rather than parsing an entire font string.   它有助于分别合并，而不是解析整个字符串
      * @type {string}
      */
     fontStyle: null,
@@ -159,18 +159,18 @@ Style.prototype = {
     fontFamily: null,
 
     /**
-     * Reserved for special functinality, like 'hr'.
+     * Reserved for special functinality, like 'hr'.       文本标签
      * @type {string}
      */
     textTag: null,
 
     /**
-     * @type {string}
+     * @type {string}        文本填充的颜色
      */
     textFill: '#000',
 
     /**
-     * @type {string}
+     * @type {string}        文本绘制的颜色
      */
     textStroke: null,
 
@@ -221,17 +221,17 @@ Style.prototype = {
     textOffset: null,
 
     /**
-     * @type {string}
+     * @type {string}      文本对齐
      */
     textAlign: null,
 
     /**
-     * @type {string}
+     * @type {string}               文本的垂直对齐
      */
     textVerticalAlign: null,
 
     /**
-     * @type {number}
+     * @type {number}             文本距离
      */
     textDistance: 5,
 
@@ -284,7 +284,7 @@ Style.prototype = {
 
     /**
      * Text rotate around position of Path or Image
-     * Only useful in Path and Image element and transformText is false.
+     * Only useful in Path and Image element and transformText is false.        文字的旋转
      */
     textRotation: 0,
 
@@ -325,19 +325,19 @@ Style.prototype = {
     textPadding: null,
 
     /**
-     * Text styles for rich text.
+     * Text styles for rich text.           富文本的文本样式。
      * @type {Object}
      */
     rich: null,
 
     /**
-     * {outerWidth, outerHeight, ellipsis, placeholder}
+     * {outerWidth, outerHeight, ellipsis, placeholder}     截断
      * @type {Object}
      */
     truncate: null,
 
     /**
-     * https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation
+     * https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation   混合
      * @type {string}
      */
     blend: null,
@@ -384,12 +384,12 @@ Style.prototype = {
     hasFill: function () {
         var fill = this.fill;
         return fill != null && fill !== 'none';
-    },
+    },                      // 是否已经有了填充颜色了。
 
     hasStroke: function () {
         var stroke = this.stroke;
         return stroke != null && stroke !== 'none' && this.lineWidth > 0;
-    },
+    },                   //是否已经有了  绘制边框的颜色了
 
     /**
      * Extend from other style
