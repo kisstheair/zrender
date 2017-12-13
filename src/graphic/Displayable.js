@@ -135,7 +135,7 @@ Displayable.prototype = {
     rectHover: false,
 
     /**
-     * Render the element progressively when the value >= 0,    逐步渲染元素当
+     * Render the element progressively when the value >= 0,    逐步渲染元素当  ?   为什么要逐步渲染？  动话？    painter内部的动画？
      * usefull for large data.
      * @type {number}
      */

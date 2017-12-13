@@ -163,7 +163,7 @@ var Painter = function (root, storage, opts) {
      * @type {Object.<string, module:zrender/Layer>}
      * @private
      */
-    var layers = this._layers = {};                  //从层级列表中获取值------可以当 layers的 key 来获取对应位置的  层layer         谁给_layers添加数据？ 绘图图形的是偶doPaint。。发现没有就会创建一个保存在这里
+    var layers = this._layers = {};                  // 如果是singleLayer的时候   只有一个层而且不是内建的，            从层级列表中获取值------可以当 layers的 key 来获取对应位置的  层layer         谁给_layers添加数据？ 绘图图形的是偶doPaint。。发现没有就会创建一个保存在这里，这里的创建都是内建的图层。
 
     /**
      * @type {Object.<string, Object>}
@@ -212,7 +212,7 @@ var Painter = function (root, storage, opts) {
      * @type {module:zrender/Layer}
      * @private
      */
-    this._hoverlayer;                           // 下面的hoverElement 数组中的元素都是在这个图层上渲染的。
+    this._hoverlayer;                           // 高亮层  -------------  下面的hoverElement 数组中的元素都是在这个图层上渲染的。
 
     this._hoverElements = [];                  // addHover addHover  clearHover  refreshHover 全部都是对这个数组的维护。  refreshHover 遍历一下  调用_doPaintEl渲染
                                                  // 里面放置得并不是  元素，  而是元素的一个镜像。 通过这个镜像 可以找到元素本身。
@@ -425,25 +425,25 @@ Painter.prototype = {
 
         this._updateLayerStatus(list);                // 更新层状态
 
-        this._clearProgressive();                     // 更新
+        this._clearProgressive();                     // 该需要清空的图层 清空一下。
 
-        this.eachBuiltinLayer(preProcessLayer);        // 更新
+        this.eachBuiltinLayer(preProcessLayer);        // 前置  图层处理一下
 
-        this._doPaintList(list, paintAll);             // 更新
+        this._doPaintList(list, paintAll);             // 绘制图形
 
-        this.eachBuiltinLayer(postProcessLayer);       // 更新
+        this.eachBuiltinLayer(postProcessLayer);       // 后置  图层处理一下
     },
 
     _doPaintList: function (list, paintAll) {
-        var currentLayer;
-        var currentZLevel;
+        var currentLayer;                                        //当前图层
+        var currentZLevel;                                       // 当前图层的id    ---- paintList  要去绘制可能 很多个Element， 可能是在同一层画布，也可能在不同的画布， 这里记录绘制过程的全局变量，
         var ctx;
 
         // var invTransform = [];
-        var scope;
+        var scope;                                               //作用域
 
-        var progressiveLayerIdx = 0;
-        var currentProgressiveLayer;
+        var progressiveLayerIdx = 0;                             // 当前正在进行的图层的id
+        var currentProgressiveLayer;                             //  当前长在进行的图层            和上面的有什么区别呢？
 
         var width = this._width;
         var height = this._height;
@@ -465,7 +465,7 @@ Painter.prototype = {
             var el = list[i];
             var elZLevel = this._singleCanvas ? 0 : el.zlevel;       // 层级   如果根节点是canvas  那就0层，   否则为图形的层 （图形的层默认也为0）
 
-            var elFrame = el.__frame;                                // 这里__frame  找不到源头，那就是undefined，  >0   <0 都是false
+            var elFrame = el.__frame;                                  // 这里__frame  找不到源头，那就是undefined，  >0   <0 都是false
 
             // Flush at current context
             // PENDING
@@ -477,7 +477,7 @@ Painter.prototype = {
             // Change draw layer                                         如果来的这个元素 的层级和当前画布上的层级不一样，  或则当前画布上还没有层级-------那就需要从层级中获取一个层 或者再创建一个。
             if (currentZLevel !== elZLevel) {
                 if (ctx) {
-                    ctx.restore();
+                    ctx.restore();                                     // 如果是切换图层的话， 那就要把之前保存的状态去除掉。从新save。
                 }
 
                 // Reset scope
@@ -494,7 +494,7 @@ Painter.prototype = {
                     );
                 }
 
-                ctx = currentLayer.ctx;
+                ctx = currentLayer.ctx;                                                 // 切换图层之后，  重置一下ctx   保存一下 默认状态。
                 ctx.save();
 
                 // Reset the count                   重置一下，计数用
@@ -555,7 +555,7 @@ Painter.prototype = {
             flushProgressiveLayer(currentProgressiveLayer);
         }
 
-        // Restore the lastLayer ctx
+        // Restore the lastLayer ctx                           绘制完所有的Element之后， 状态恢复默认值 ctx.restore();
         ctx && ctx.restore();
         // If still has clipping state
         // if (scope.prevElClipPaths) {
@@ -644,7 +644,7 @@ Painter.prototype = {
 
         var layer = this._layers[zlevel];
         if (!layer) {
-            // Create a new layer
+            // Create a new layer                                             //  通过绘制 的时候去创建的图层 都是内建的图层，   HTML中的canvas 图层不是内建的。
             layer = new Layer('zr_' + zlevel, this, this.dpr);
             layer.__builtin__ = true;
 
@@ -777,20 +777,20 @@ Painter.prototype = {
         var layers = this._layers;
         var progressiveLayers = this._progressiveLayers;
 
-        var elCountsLastFrame = {};
-        var progressiveElCountsLastFrame = {};
+        var elCountsLastFrame = {};                          //  最后一帧            各个图层上 对应的元素的数量
+        var progressiveElCountsLastFrame = {};               //  最后一帧，正在进行的 各个图层上  对应的元素的数量
 
         this.eachBuiltinLayer(function (layer, z) {
             elCountsLastFrame[z] = layer.elCount;
-            layer.elCount = 0;
+            layer.elCount = 0;                               //清空之前图层元素的计数。
             layer.__dirty = false;
         });
-
         util.each(progressiveLayers, function (layer, idx) {
             progressiveElCountsLastFrame[idx] = layer.elCount;
             layer.elCount = 0;
             layer.__dirty = false;
         });
+
 
         var progressiveLayerCount = 0;
         var currentProgressiveLayer;
@@ -800,8 +800,8 @@ Painter.prototype = {
             var el = list[i];
             var zlevel = this._singleCanvas ? 0 : el.zlevel;
             var layer = layers[zlevel];
-            var elProgress = el.progressive;
-            if (layer) {
+            var elProgress = el.progressive;                           // 当 >0  逐步渲染元素
+            if (layer) {                                                 // 遍历所有的要绘制的图形，    对应的图层上计数，  如果一个元素脏了，那么整个图层也是脏了
                 layer.elCount++;
                 layer.__dirty = layer.__dirty || el.__dirty;
             }
@@ -814,7 +814,7 @@ Painter.prototype = {
                     frameCount++;
                 }
                 var elFrame = el.__frame = frameCount - 1;
-                if (!currentProgressiveLayer) {
+                if (!currentProgressiveLayer) {                                                           //  如果当前的  渐进图层不存在 那就创建一个 并放入       progressiveLayers中。
                     var idx = Math.min(progressiveLayerCount, MAX_PROGRESSIVE_LAYER_NUMBER - 1);
                     currentProgressiveLayer = progressiveLayers[idx];
                     if (!currentProgressiveLayer) {

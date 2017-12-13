@@ -62,7 +62,7 @@ Element.prototype = {
      * 该路径会继承被裁减对象的变换
      * @type {module:zrender/graphic/Path}
      * @see http://www.w3.org/TR/2dcontext/#clipping-region
-     * @readOnly                                                应该是个数组,  用某些元素Element当做自己的  剪切路径
+     * @readOnly                                                    应该是个Element对象,  用某个元素Element当做自己的  剪切路径  只能是一个  不是数组.
      */
     clipPath: null,
 
