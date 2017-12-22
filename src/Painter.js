@@ -206,7 +206,7 @@ var Painter = function (root, storage, opts) {
     }
 
     // Layers for progressive rendering
-    this._progressiveLayers = [];                    // 正在渲染的 图层数组吗？？
+    this._progressiveLayers = [];                    // 正在渲染的 图层数组吗？？    渐进渲染的图层？   为什么是渐进呢？
 
     /**
      * @type {module:zrender/Layer}
@@ -333,9 +333,9 @@ Painter.prototype = {
         if (!len) {
             return;
         }
-        timsort(hoverElements, this.storage.displayableSortFunc);
+        timsort(hoverElements, this.storage.displayableSortFunc);      // 传入hoverElement数组 和排序函数  ----去排序一下。
 
-        // Use a extream large zlevel
+        // Use a extream large zlevel                                   // 每个图层有个图层编号，0,1,2，，，，代表在绘图中的顺序 并且有个 zr_0的id。  这里用一个超大型zlevel图层编号100000   放置在最上层。
         // FIXME?
         if (!hoverLayer) {
             hoverLayer = this._hoverlayer = this.getLayer(1e5);
@@ -363,7 +363,7 @@ Painter.prototype = {
                 el.invTransform = originalEl.invTransform;
                 el.__clipPaths = originalEl.__clipPaths;
                 // el.
-                this._doPaintEl(el, hoverLayer, true, scope);
+                this._doPaintEl(el, hoverLayer, true, scope);    //绘制 所有的 hover 元素。
             }
         }
         hoverLayer.ctx.restore();
@@ -376,7 +376,7 @@ Painter.prototype = {
     _startProgessive: function () {
         var self = this;
 
-        if (!self._furtherProgressive) {
+        if (!self._furtherProgressive) {                       // _paintList所有的元素之后会修改     _furtherProgressive  这个标志位，  判断要不要 进行_startProgessive  ，都绘制完了，这是要干嘛？
             return;
         }
 
@@ -391,7 +391,7 @@ Painter.prototype = {
             // In case refreshed or disposed
             if (token === self._progressiveToken && self.storage) {
 
-                self._doPaintList(self.storage.getDisplayList());
+                self._doPaintList(self.storage.getDisplayList());              //从新从 storage中 获取list  这次没有传入 true  所以 displaylist没有更新直接拿回来，  和上次拿回来的一样。
 
                 if (self._furtherProgressive) {
                     self._progress++;

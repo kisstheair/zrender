@@ -108,7 +108,7 @@ var Layer = function(id, painter, dpr) {
     this.dpr = dpr;
 };
 
-Layer.prototype = {
+Layer.prototype = {                                  // 画布其实很简单，  根据提供的dom   在新建一层画布，设置一些基本参数， 提供好ctx上下文。  再提供一些api
 
     constructor: Layer,
 
@@ -125,14 +125,14 @@ Layer.prototype = {
     createBackBuffer: function () {
         var dpr = this.dpr;
 
-        this.domBack = createDom('back-' + this.id, this.painter, dpr);
-        this.ctxBack = this.domBack.getContext('2d');
+        this.domBack = createDom('back-' + this.id, this.painter, dpr);          // 又创建一个 图层 当做 Domback?    dom 返回？  什么意思 做什么用的？
+        this.ctxBack = this.domBack.getContext('2d');                             // Domback 的 上下文
         this.ctxBack.__currentValues = {};
 
         if (dpr != 1) {
             this.ctxBack.scale(dpr, dpr);
         }
-    },
+    },             // 为什么会有Domback呢，  这里就是在清空画布之前 保存当前画布的状态，   清空画布之后，可能有动态模糊的背景， 所以把保存的状态 再当成图片绘制到Dom上，做成模糊的状态。
 
     /**
      * @param  {number} width
@@ -172,7 +172,7 @@ Layer.prototype = {
         var height = dom.height;
 
         var clearColor = this.clearColor;
-        var haveMotionBLur = this.motionBlur && !clearAll;
+        var haveMotionBLur = this.motionBlur && !clearAll;     /// 动态模糊
         var lastFrameAlpha = this.lastFrameAlpha;
 
         var dpr = this.dpr;
@@ -190,7 +190,7 @@ Layer.prototype = {
             );
         }
 
-        ctx.clearRect(0, 0, width, height);
+        ctx.clearRect(0, 0, width, height);    //  清空画布
         if (clearColor) {
             var clearColorGradientOrPattern;
             // Gradient
@@ -213,9 +213,9 @@ Layer.prototype = {
             ctx.fillStyle = clearColorGradientOrPattern || clearColor;
             ctx.fillRect(0, 0, width, height);
             ctx.restore();
-        }
+        }                 // 绘制上 清空后的颜色，渐变 或者图片
 
-        if (haveMotionBLur) {
+        if (haveMotionBLur) {                 // 如果有动态模糊， 那就  设置globalAlpha 全局透明度 ， 然后把domBack 绘制上
             var domBack = this.domBack;
             ctx.save();
             ctx.globalAlpha = lastFrameAlpha;
