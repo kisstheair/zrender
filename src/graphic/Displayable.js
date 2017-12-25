@@ -136,7 +136,7 @@ Displayable.prototype = {
 
     /**
      * Render the element progressively when the value >= 0,    逐步渲染元素当  ?   为什么要逐步渲染？  动话？    painter内部的动画？
-     * usefull for large data.
+     * usefull for large data.                                  用于大数据？
      * @type {number}
      */
     progressive: -1,

@@ -260,15 +260,15 @@ Painter.prototype = {
      * 刷新
      * @param {boolean} [paintAll=false]   强制绘制所有displayable      把 storage仓库中的 单个图形 全部绘制一遍
      */
-    refresh: function (paintAll) {
+    refresh: function (paintAll) {                          // 每次刷新都要绘制3部分内容，   1，全部绘制一下。2. 刷新hover层。 3.  绘制渐进层
 
-        var list = this.storage.getDisplayList(true);            // 从storage中  获取所有的要绘制的元素。
+        var list = this.storage.getDisplayList(true);       // 从storage中  获取所有的要绘制的元素。
 
         var zlevelList = this._zlevelList;
 
-        this._paintList(list, paintAll);                       //全部绘制一下。
+        this._paintList(list, paintAll);                       //1，全部绘制一下。
 
-        // Paint custum layers                                  绘制layer层
+        // Paint custum layers
         for (var i = 0; i < zlevelList.length; i++) {
             var z = zlevelList[i];
             var layer = this._layers[z];
@@ -277,10 +277,10 @@ Painter.prototype = {
             }
         }
 
-        this.refreshHover();                                 //刷新hover层
+        this.refreshHover();                                  //2. 刷新hover层
 
         if (this._progressiveLayers.length) {
-            this._startProgessive();
+            this._startProgessive();                         //3.  绘制渐进层  （根据图层的渲染次数，  多次渲染。）
         }
 
         return this;
@@ -380,18 +380,18 @@ Painter.prototype = {
             return;
         }
 
-        // Use a token to stop progress steps triggered by
+        // Use a token to stop progress steps triggered by      用一个token  来记录状态， 保持一致刷新，   每次 _progress++ ， 当绘制完之后，更新_furtherProgressive状态，   不满足需求了 就更改token的值，从而停止循环。
         // previous zr.refresh calling.
         var token = self._progressiveToken = +new Date();
 
-        self._progress++;
+        self._progress++;                                      // painter绘制的次数。 记录总进度，  但是     最大进度是记录在图层上的  对比的也是 图层上的进度， 这个怎么进行的？
         requestAnimationFrame(step);
 
         function step() {
             // In case refreshed or disposed
             if (token === self._progressiveToken && self.storage) {
 
-                self._doPaintList(self.storage.getDisplayList());              //从新从 storage中 获取list  这次没有传入 true  所以 displaylist没有更新直接拿回来，  和上次拿回来的一样。
+                self._doPaintList(self.storage.getDisplayList());              //从新从 storage中 获取list  这次没有传入 true  所以 displaylist没有更新直接拿回来，  和上次拿回来的一样。  相当于self._progress++; 之后   从新绘制了一遍
 
                 if (self._furtherProgressive) {
                     self._progress++;
@@ -448,7 +448,7 @@ Painter.prototype = {
         var width = this._width;
         var height = this._height;
         var layerProgress;
-        var frame = this._progress;
+        var frame = this._progress;                            // 从这里获取 总的进度的。
         function flushProgressiveLayer(layer) {
             var dpr = ctx.dpr || 1;
             ctx.save();
@@ -563,9 +563,9 @@ Painter.prototype = {
         // }
 
         this._furtherProgressive = false;
-        util.each(this._progressiveLayers, function (layer) {
-            if (layer.__maxProgress >= layer.__progress) {
-                this._furtherProgressive = true;
+        util.each(this._progressiveLayers, function (layer) {              // 每次渲染完所有的元素之后，  每个都要判断是不是还没到 最大帧。
+            if (layer.__maxProgress >= layer.__progress) {                 // 每一帧是一个progress 如果layer.__progress  还小于  __maxProgress  ，那么还需要再来一次。
+                this._furtherProgressive = true;                           // 如果有一个图层没到要求，就需要从新来一次。
             }
         }, this);
     },
@@ -796,19 +796,19 @@ Painter.prototype = {
         var currentProgressiveLayer;
         var lastProgressiveKey;
         var frameCount = 0;
-        for (var i = 0, l = list.length; i < l; i++) {
+        for (var i = 0, l = list.length; i < l; i++) {                 //遍历所有要 绘制的元素
             var el = list[i];
             var zlevel = this._singleCanvas ? 0 : el.zlevel;
             var layer = layers[zlevel];
-            var elProgress = el.progressive;                           // 当 >0  逐步渲染元素
+            var elProgress = el.progressive;                           // 元素的displayable属性   ，当 >0  逐步渲染元素
             if (layer) {                                                 // 遍历所有的要绘制的图形，    对应的图层上计数，  如果一个元素脏了，那么整个图层也是脏了
                 layer.elCount++;
                 layer.__dirty = layer.__dirty || el.__dirty;
             }
 
-            /////// Update progressive
+            /////// Update progressive                                   //   如果 元素的本身是渐进的， 那就找对应的   ---放到progressiveLayers中的图层，  如果没有创建一个。   这里就是创建并维护渐进图层。
             if (elProgress >= 0) {
-                // Fix wrong progressive sequence problem.
+                // Fix wrong progressive sequence problem.                修正错误渐进序列问题。
                 if (lastProgressiveKey !== elProgress) {
                     lastProgressiveKey = elProgress;
                     frameCount++;
@@ -824,7 +824,7 @@ Painter.prototype = {
                         currentProgressiveLayer.initContext();
                     }
                     currentProgressiveLayer.__maxProgress = 0;
-                }
+                }                      //  如果当前的  渐进图层不存在 那就创建一个 并放入       progressiveLayers中。
                 currentProgressiveLayer.__dirty = currentProgressiveLayer.__dirty || el.__dirty;
                 currentProgressiveLayer.elCount++;
 
