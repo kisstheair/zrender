@@ -169,7 +169,7 @@ var Painter = function (root, storage, opts) {
      * @type {Object.<string, Object>}
      * @type {private}
      */
-    this._layerConfig = {};
+    this._layerConfig = {};                         // 图层配置 修改的时候修改这里 ，然后再修改到对应的layer处
 
     if (!singleCanvas) {                                   // 如果不是canvas元素， 那就用 有可能是其他任何元素了，获取宽度，可能不一样。  专用方法去获取。
         this._width = this._getSize(0);

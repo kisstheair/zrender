@@ -2,7 +2,7 @@
 var STYLE_COMMON_PROPS = [
     ['shadowBlur', 0], ['shadowOffsetX', 0], ['shadowOffsetY', 0], ['shadowColor', '#000'],
     ['lineCap', 'butt'], ['lineJoin', 'miter'], ['miterLimit', 10]
-];
+];                 // 默认全局变量，vanvas的全局变量
 
 // var SHADOW_PROPS = STYLE_COMMON_PROPS.slice(0, 4);
 // var LINE_PROPS = STYLE_COMMON_PROPS.slice(4);

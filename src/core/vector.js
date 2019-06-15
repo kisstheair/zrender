@@ -1,3 +1,7 @@
+/***
+ * 矢量,向量  计算工具
+ * */
+
 
 var ArrayCtor = typeof Float32Array === 'undefined'
     ? Array

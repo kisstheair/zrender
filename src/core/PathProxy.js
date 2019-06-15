@@ -1,5 +1,5 @@
 /**
- * Path 代理，可以在`buildPath`中用于替代`ctx`, 会保存每个path操作的命令到pathCommands属性中
+ * Path 代理，可以在`buildPath`中用于替代`ctx`, 会保存每个path操作的命令到pathCommands属性中            为什么使用代理？为了保存命令，  ctx有很多方法， 这里拦截一下， 把命令保存再来，   可以做动态效果把
  * 可以用于 isInsidePath 判断以及获取boundingRect
  *
  * @module zrender/core/PathProxy
@@ -54,7 +54,7 @@ var hasTypedArray = typeof Float32Array != 'undefined';
  */
 var PathProxy = function (notSaveData) {
 
-    this._saveData = !(notSaveData || false);         // 这里为了兼容，难道做了2套逻辑吗？   canvas 和SVG？     如果 _saveData 那么就是 this.data=[] 用模拟SVG  path命令绘制路径的方式，   否则就用canvas 的ctx.getContext("2d")
+    this._saveData = !(notSaveData || false);         //  是否保存绘图命令，   如果保存，  那么将会保存绘制图形命令的  list数组
 
     if (this._saveData) {
         /**

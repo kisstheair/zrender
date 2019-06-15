@@ -37,7 +37,7 @@ Path.prototype = {
 
     brush: function (ctx, prevEl) {                                //  绘制图形  这里分了2部分，  一部分绘制形状， 一部分刷上颜色。  这里是刷颜色
         var style = this.style;
-        var path = this.path || pathProxyForDraw;
+        var path = this.path || pathProxyForDraw;              //为什么使用代理？为了保存命令， 在vanvas上面套一层。
         var hasStroke = style.hasStroke();
         var hasFill = style.hasFill();
         var fill = style.fill;
@@ -47,7 +47,7 @@ Path.prototype = {
         var hasFillPattern = hasFill && !!(fill.image);                  // 是否  有填充图案
         var hasStrokePattern = hasStroke && !!(stroke.image);            // 是否具有 图案 绘制线
 
-        style.bind(ctx, this, prevEl);
+        style.bind(ctx, this, prevEl);                                 //设置canvas的全局变量
         this.setTransform(ctx);                                         //  这里开始设置变换  和下面的 重置变换 restoreTransform是一对，    中间是绘图 和填充的过程
 
         if (this.__dirty) {
@@ -146,7 +146,7 @@ Path.prototype = {
         this.path = new PathProxy();
     },
 
-    getBoundingRect: function () {
+    getBoundingRect: function () {          //获取矩形边界
         var rect = this._rect;
         var style = this.style;
         var needsUpdateRect = !rect;
