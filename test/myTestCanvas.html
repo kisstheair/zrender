@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Clipping</title>
+    <script src="../dist/zrender.js"></script>
+</head>
+<body>
+    <!--<div id="main" style="width:1000px;height:600px;"></div>-->
+    <canvas id="canvas" style="width:1000px;height:600px;"></canvas>
+    <script type="text/javascript">
+        // 初始化zrender
+//        var zr = zrender.init(document.getElementById('main'));
+		var context = document.getElementById('canvas').getContext('2d');
+		// 登录状态下不会出现这行文字，点击页面右上角一键登录
+
+		var img = new Image();
+		img.onload = function () {
+			// 剪裁路径是三角形
+			context.beginPath();
+			context.moveTo(20, 20);
+			context.lineTo(200, 80);
+			context.lineTo(110, 150);
+			// 剪裁
+			context.clip();
+			// 填充图片
+			context.drawImage(img, 0, 0, 250, 167);
+
+//			context.beginPath();
+			context.arc(150, 75, 50, 0, Math.PI * 2);
+			context.stroke();
+
+
+			context.clip();
+			context.fillRect(100, 20, 200, 80);
+// 登录状态下不会出现这行文字，点击页面右上角一键登录
+
+		};
+		img.src = './test.png';
+		// 登录状态下不会出现这行文字，点击页面右上角一键登录
+    </script>
+</body>
+</html>

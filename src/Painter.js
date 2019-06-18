@@ -463,9 +463,9 @@ Painter.prototype = {
 
         for (var i = 0, l = list.length; i < l; i++) {                  // 把storage中的 Sub形状遍历一下  var list = this.storage.getDisplayList(true);
             var el = list[i];
-            var elZLevel = this._singleCanvas ? 0 : el.zlevel;       // 层级   如果根节点是canvas  那就0层，   否则为图形的层 （图形的层默认也为0）
+            var elZLevel = this._singleCanvas ? 0 : el.zlevel;       // 层级   如果根节点是canvas  那就0层，   否则为图形的层 （图形的层默认也为0）     这里只是提供一个 zindex 供我们分层使用
 
-            var elFrame = el.__frame;                                  // 这里__frame  找不到源头，那就是undefined，  >0   <0 都是false
+            var elFrame = el.__frame;                                  // 这里__frame  找不到源头， 默认 -1？  哪来的？
 
             // Flush at current context
             // PENDING
@@ -587,15 +587,15 @@ Painter.prototype = {
             && !(el.culling && isDisplayableCulled(el, this._width, this._height))   //   忽视掉   超出了可视区域。
         ) {
 
-            var clipPaths = el.__clipPaths;
+            var clipPaths = el.__clipPaths;                                       // 在storage 中已经把 Element 有层级关系的clipPath 的 全部放到 相关的el上面。
 
             // Optimize when clipping on group with several elements
             if (scope.prevClipLayer !== currentLayer
                 || isClipPathChanged(clipPaths, scope.prevElClipPaths)
             ) {
                 // If has previous clipping state, restore from it
-                if (scope.prevElClipPaths) {
-                    scope.prevClipLayer.ctx.restore();
+                if (scope.prevElClipPaths) {                                  // scope 保存的是之前的 clipLayer， 之前的El，之前的clipPaths
+                    scope.prevClipLayer.ctx.restore();                       // 如果有 clip了  那么恢复一下  和下面的save对应。
                     scope.prevClipLayer = scope.prevElClipPaths = null;
 
                     // Reset prevEl since context has been restored
@@ -603,15 +603,15 @@ Painter.prototype = {
                 }
                 // New clipping state
                 if (clipPaths) {
-                    ctx.save();
-                    doClip(clipPaths, ctx);                                     // clip  设置剪切的区域，  把某个空间当做是以后有效的空间， 其他区域不可访问。
+                    ctx.save();                                         //先保存一下绘图空间主要针对 clip的， 等会再到恢复到之前额区域
+                    doClip(clipPaths, ctx);                              // clip  设置剪切的区域， clip可以连续调用取合集
                     scope.prevClipLayer = currentLayer;
                     scope.prevElClipPaths = clipPaths;
                 }
             }
             el.beforeBrush && el.beforeBrush(ctx);
 
-            el.brush(ctx, scope.prevEl || null);                               // 这里面是 设置好颜色之后绘制图形。    那前面的doClip  算什么？  为这里框定一个范围？ 对的就是这样的。
+            el.brush(ctx, scope.prevEl || null);                               // 这里面是 绘制形状 并上色 fill 或者 stroke           那前面的doClip  算什么？  为这里框定一个范围？ 对的就是这样的。
             scope.prevEl = el;
 
             el.afterBrush && el.afterBrush(ctx);

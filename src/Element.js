@@ -93,7 +93,7 @@ Element.prototype = {
     },
 
     /**
-     * Hook before update
+     * Hook before update                 每个元素都有其独立的状态参数，         修改参数之后，  animate会自动更新它的信息。 这里相当于修改参数之前的狗子函数
      */
     beforeUpdate: function () {},
     /**
@@ -171,12 +171,12 @@ Element.prototype = {
     },
 
     /**
-     * @param {module:zrender/graphic/Path} clipPath   修剪路径。
+     * @param {module:zrender/graphic/Path} clipPath   修剪路径。       一个Element最多只能有一个     Element当作自己的ClipPath，  更换的话必须先移除。
      */
     setClipPath: function (clipPath) {
         var zr = this.__zr;
         if (zr) {
-            clipPath.addSelfToZr(zr);
+            clipPath.addSelfToZr(zr);                             // 直接setClipPath就行了。  不用将clip添加进zr
         }
 
         // Remove previous clip path
@@ -186,7 +186,7 @@ Element.prototype = {
 
         this.clipPath = clipPath;
         clipPath.__zr = zr;
-        clipPath.__clipTarget = this;
+        clipPath.__clipTarget = this;                        // 相互引用   this.clipPath = AAA           AAA.__clipTarget=this;
 
         this.dirty(false);
     },
@@ -210,10 +210,10 @@ Element.prototype = {
 
     /**
      * Add self from zrender instance.
-     * Not recursively because it will be invoked when element added to storage.
+     * Not recursively because it will be invoked when element added to storage.  不是递归的，因为它将在元素添加到存储时被调用。
      * @param {module:zrender/ZRender} zr
      */
-    addSelfToZr: function (zr) {
+    addSelfToZr: function (zr) {                               //zrender.add 是this.storage.addRoot(el);添加到storage里面了，      但是clipPath 只是添加动画  （clip 和element有区别的）
         this.__zr = zr;
         // 添加动画
         var animators = this.animators;

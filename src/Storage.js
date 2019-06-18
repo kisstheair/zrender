@@ -108,7 +108,7 @@ Storage.prototype = {
             return;
         }
 
-        el.beforeUpdate();
+        el.beforeUpdate();         // 钩子函数，               我们只更新Element的状态就行了，  animate会绘制它
 
         if (el.__dirty) {
 
@@ -139,12 +139,12 @@ Storage.prototype = {
 
                 clipPaths.push(currentClipPath);
 
-                parentClipPath = currentClipPath;
+                parentClipPath = currentClipPath;                 //-----------------------向上找  一直找剪切元素， 都放到这个数组里面  clipPaths
                 currentClipPath = currentClipPath.clipPath;
             }
         }
 
-        if (el.isGroup) {
+        if (el.isGroup) {                                      // group 是没有剪切路径的
             var children = el._children;
 
             for (var i = 0; i < children.length; i++) {
@@ -164,7 +164,7 @@ Storage.prototype = {
 
         }
         else {
-            el.__clipPaths = clipPaths;
+            el.__clipPaths = clipPaths;                        // 只有元素有 剪切路径
 
             this._displayList[this._displayListLen++] = el;
         }
@@ -183,8 +183,11 @@ Storage.prototype = {
 
 
     /**
-     * 添加图形(Shape)或者组(Group)到根节点                 外部对roots进行维护
-     * @param {module:zrender/Element} el
+     * 添加图形(Shape)或者组(Group)到根节点                 外部对roots进行维护  ，不会过滤重复的元素。
+     * @param {module:zrender/Element} el          // addRoot        有添加元素的动作，同时调用addToStorage，并告诉需要更新了。
+	 *                                             //addToStorage     让storage知道，有元素进来了需要更新了，  并没有添加的动作        这个是主要针对Group元素的，  group本身会添加到root，  group的子元素不会添加到root
+	 *                                             //
+	 * 
      */
     addRoot: function (el) {
         if (el.__storage === this) {
