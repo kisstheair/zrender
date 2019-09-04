@@ -24,7 +24,7 @@
         var cpy1 = Math.random() * zr.getHeight();
         var x2 = Math.random() * zr.getWidth();
         var y2 = Math.random() * zr.getHeight();
-        for (var i = 0; i < 10000; i++) {
+        for (var i = 0; i < 100; i++) {
             x1 += (Math.random() - 0.5) * 10;
             y1 += (Math.random() - 0.5) * 10;
             cpx1 += (Math.random() - 0.5) * 10;
@@ -43,6 +43,7 @@
                     x2: x2,
                     y2: y2
                 },
+				zlevel:i,
                 style: {
                     lineWidth: 0.5,
                     opacity: 0.1,

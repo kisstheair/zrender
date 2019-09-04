@@ -11,28 +11,57 @@ import GestureMgr from '../core/GestureMgr';
 
 
 
+/**    总共下面几种事件。15个
+ click: ƒ (event)         //第一类：基础的鼠标事件
+ contextmenu: ƒ (event)
+ dblclick: ƒ (event)
+ mousedown: ƒ (event)
+ mousemove: ƒ (event)
+ mouseout: ƒ (event)
+ mouseup: ƒ (event)
+ mousewheel: ƒ (event)
 
-var TOUCH_CLICK_DELAY = 300;
-                                                               // 不仅仅有鼠标事件了 现在有Mouse 鼠标事件   |||||  touch 触摸事件   |||||   pointer 输入事件 Pointer Events API
+ touchend: ƒ (event)       //第二类：触摸屏事件
+ touchmove: ƒ (event)
+ touchstart: ƒ (event)
+
+ pointerdown: ƒ (event)     //第三类：微软提出的point事件，试图合并 pen，mouse touch
+ pointermove: ƒ (event)
+ pointerout: ƒ (event)
+ pointerup: ƒ (event)
+* */
+
+
+
+
+
+
+/**第一类事件名称
+ * */
+var TOUCH_CLICK_DELAY = 300;                                                               // 不仅仅有鼠标事件了 现在有Mouse 鼠标事件   |||||  touch 触摸事件   |||||   pointer 输入事件 Pointer Events API
 var mouseHandlerNames = [
     'click', 'dblclick', 'mousewheel', 'mouseout',
     'mouseup', 'mousedown', 'mousemove', 'contextmenu'
 ];
 
+
+/**第一类事件名称
+ * */
 var touchHandlerNames = [                                               // 触摸屏的事件
     'touchstart', 'touchend', 'touchmove'
 ];
 
-var pointerEventNames = {                                                   // （可能是ie浏览器专有的，）         应该叫做 编辑事件。   输入时的事件， 就是当查看图表是， 框选区域放大-----编辑状态
+
+
+/**第三类事件名称
+ * */
+var pointerEventNames = {                                                   // （point event 是微软提出的，打算把所有的  pen，touch mouse 事件统一管理）
     pointerdown: 1, pointerup: 1, pointermove: 1, pointerout: 1
 };
-
 var pointerHandlerNames = zrUtil.map(mouseHandlerNames, function (name) {
     var nm = name.replace('mouse', 'pointer');
     return pointerEventNames[nm] ? nm : name;
 });
-
-// 总共 15个事件 ，  为什么要分成2部分呢？
 
 
 
@@ -45,7 +74,7 @@ function eventNameFix(name) {
     return (name === 'mousewheel' && env.browser.firefox) ? 'DOMMouseScroll' : name;
 }
 
-function processGesture(proxy, event, stage) {
+function processGesture(proxy, event, stage) {         //处理手势
     var gestureMgr = proxy._gestureMgr;
 
     stage === 'start' && gestureMgr.clear();
@@ -271,7 +300,7 @@ zrUtil.each(['click', 'mousedown', 'mouseup', 'mousewheel', 'dblclick', 'context
  * 为控制类实例初始化dom 事件处理函数
  *
  * @inner
- * @param {module:zrender/Handler} instance 控制类实例          初始化 domhandler  都有那些
+ * @param {module:zrender/Handler} instance 控制类实例          初始化 domhandler  都有15种，   把15种事件放到实例_handlers上
  */
 function initDomHandler(instance) {
     zrUtil.each(touchHandlerNames, function (name) {

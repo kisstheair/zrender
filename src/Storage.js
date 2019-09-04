@@ -164,9 +164,9 @@ Storage.prototype = {
 
         }
         else {
-            el.__clipPaths = clipPaths;                        // 只有元素有 剪切路径
+            el.__clipPaths = clipPaths;                                  //--------------- 只有元素有 剪切路径
 
-            this._displayList[this._displayListLen++] = el;
+            this._displayList[this._displayListLen++] = el;            //----------------- 最后绘制是没有  Group元素的， 只是把Group中的shape元素添加进来。
         }
     },
 

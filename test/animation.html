@@ -40,11 +40,11 @@
         });
         zr.add(circle);
 
-        circle.animate('')
-            .when(200, {
+        circle.animate('')            //animate是调用  Animatable.animate的接口
+            .when(200, {              //when是调用  Animator.when的接口
                 position: [200, 0]
             })
-            .start();
+            .start();                  //start是调用  Animator.的接口start
         circle.animate('', true)
             .when(1000, {
                 position: [200, 0]

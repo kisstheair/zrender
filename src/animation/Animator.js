@@ -456,7 +456,7 @@ function createTrackClip(animator, easing, oneTrackDone, keyframes, propName, fo
  * @param {Function} setter
  */
 var Animator = function(target, loop, getter, setter) {      // Animator  是一个动画组合， 可以拆分长多个Clip 放入到自己的   _clipList 数组中，   当调用 Animation.addAnimator 的时候，会直接获取 这个动画的_clipList， 放入到  animation中去  。 （zr.animation.addAnimator(animator);）
-    this._tracks = {};                                      // 关键帧， 轨迹对象。{ cx:[{time:0,value:20}, {time:20,value:100}]    ,   cy:[{} ]  }   对象调用 .when(5000, {}）向里面添加关键帧。
+    this._tracks = {};                                      // 动画轨道（应该是动画的一个属性一个轨道，比如位置一个轨道，opacity一个轨道，颜色一个轨道，）  { cx:[{time:0,value:20}, {time:20,value:100}]    ,   cy:[{} ]  } ，  对象调用 .when(5000, {}）向对应轨道里面添加关键帧。
     this._target = target;                                  // target是动画的目标，---- ---- 动画创建的时候： target=获取的初始状态----- 通过circle.animate('shape', true)获取   {cx: 30, cy: 200, r: 30}  ，然后 _target被赋予 _tracks关键帧的最后一帧。
 
     this._loop = loop || false;

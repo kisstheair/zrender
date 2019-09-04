@@ -122,13 +122,13 @@ var Painter = function (root, storage, opts) {
     this.type = 'canvas';
 
     // In node environment using node-canvas
-    var singleCanvas = !root.nodeName          // In node ?        // 根节点是canvas   那就是true，       如果 传入的是canvas元素，那就在一个canvas上绘图？    如果不是canvas那多层绘图？
+    var singleCanvas = !root.nodeName          // In node ?        // 根节点是canvas   那就是true，       如果 传入的是canvas元素，那就在一个canvas上绘图？    如果不是 可能是div  那就在div中创建一个cavans元素
         || root.nodeName.toUpperCase() === 'CANVAS';
 
     this._opts = opts = util.extend({}, opts || {});
     this.dpr = opts.devicePixelRatio || devicePixelRatio;        //   @type {number} 设备像素比
     this._singleCanvas = singleCanvas;                            //  @type {boolean}
-    this.root = root;                                              //  @type {HTMLElement}  绘图容器
+    this.root = root;                                              //  @type {HTMLElement}  绘图容器可能是cavans元素，  也可能是div元素。
     var rootStyle = root.style;
 
     if (rootStyle) {
@@ -137,7 +137,7 @@ var Painter = function (root, storage, opts) {
         rootStyle['user-select'] =
         rootStyle['-webkit-touch-callout'] = 'none';
 
-        root.innerHTML = '';
+        root.innerHTML = '';                                //html元素 把里面的内容清空，并且文本不能被选择。  这个是不是针对SVG的？  不知道呀，canvas文字肯定不能选择。
     }
 
     // this._domRoot -----------------------------------这个是以后绘图的地方，判断this.root后，  返回的是canvas 空间， 或者是 div position:relative ,
@@ -160,8 +160,8 @@ var Painter = function (root, storage, opts) {
     var zlevelList = this._zlevelList = [];           //层级列表  [0,1]  那么说明有两层        记录的 layers中每个key数组。
 
     /**
-     * @type {Object.<string, module:zrender/Layer>}
-     * @private
+     * @type {Object.<string, module:zrender/Layer>}         //一个canvas 对应一层 layer，     一般情况下只会有一个canvas 也就是只有一个layer 默认0，  如果有hover hover会单独占据一层最大1000   ，
+     * @private                                                                               其他的可以主动设置参数  zlevel:i,  来设置元素所在层级，  如果多了就会自动生成canvas。  如：test/hoverLayer.html
      */
     var layers = this._layers = {};                  // 如果是singleLayer的时候   只有一个层而且不是内建的，            从层级列表中获取值------可以当 layers的 key 来获取对应位置的  层layer         谁给_layers添加数据？ 绘图图形的是偶doPaint。。发现没有就会创建一个保存在这里，这里的创建都是内建的图层。
 
@@ -178,7 +178,7 @@ var Painter = function (root, storage, opts) {
         var domRoot = this._domRoot = createRoot(
             this._width, this._height
         );
-        root.appendChild(domRoot);                        // 如果不是canvas的话，  那就新建一个 div元素  ，宽度高度一样  positon:relative   overflow hidden  当做主背景。
+        root.appendChild(domRoot);                        // 如果不是canvas的话，  可能是div元素，   那就新建一个 canvas元素  ，宽度高度一样  positon:relative   overflow hidden  当做主背景。
     }
     else {                                                // 如果是canvas 元素，那就好说了， 获取宽度就一种。
         if (opts.width != null) {
@@ -289,7 +289,7 @@ Painter.prototype = {
 
 
 
-    addHover: function (el, hoverStyle) {            // 里面放置得并不是  元素，  而是元素的一个镜像。 通过这个镜像 可以找到元素本身。
+    addHover: function (el, hoverStyle) {            // 里面放置得并不是  元素，  而是元素的一个镜像。 通过这个镜像 可以找到元素本身。         所以hover元素 也是一个元素。
         if (el.__hoverMir) {
             return;
         }

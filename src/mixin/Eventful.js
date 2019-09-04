@@ -13,7 +13,7 @@ var arrySlice = Array.prototype.slice;
  * @constructor
  */
 var Eventful = function () {
-    this._$handlers = {};
+    this._$handlers = {};              //记录所有绑定的事件  格式  {mouseover：[],  mouseup:[],,,,,}
 };
 
 Eventful.prototype = {
