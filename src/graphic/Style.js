@@ -7,8 +7,14 @@ var STYLE_COMMON_PROPS = [
 // var SHADOW_PROPS = STYLE_COMMON_PROPS.slice(0, 4);
 // var LINE_PROPS = STYLE_COMMON_PROPS.slice(4);
 
+/**
+ *
+ * 每一个element都对应一个单独的Style对象，   Style.prototype记录的是公共的属性，
+ * 											当自己有属性的时候取自己的，没有这个属性就去prototype上取。
+ *
+ * */
 var Style = function (opts, host) {
-    this.extendFrom(opts, false);
+    this.extendFrom(opts, false);       //继承样式
     this.host = host;
 };
 
